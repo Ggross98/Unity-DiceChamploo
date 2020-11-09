@@ -25,27 +25,31 @@ public class CharacterInfo : MonoBehaviour
 
     List<DiceView> diceViewList = new List<DiceView>();
 
-    public void SetName(string s)
+    void SetName(string s)
     {
         nameText.text = s;
     }
 
-    public void SetHealth(int hp, int max)
+    void SetHealth(int hp, int max)
     {
         healthText.text = hp + "/" + max;
     }
 
+<<<<<<< Updated upstream
     public void SetGender(bool g)
+=======
+    void SetGender(bool g)
+>>>>>>> Stashed changes
     {
         genderText.text = g ? "♂" : "♀";
     }
 
-    public void SetLevel(int i)
+    void SetLevel(int i)
     {
         levelText.text = "Level " + i;
     }
 
-    public void SetImage(Sprite s)
+    void SetImage(Sprite s)
     {
         portrait.sprite = s;
     }
@@ -58,11 +62,15 @@ public class CharacterInfo : MonoBehaviour
     /// <summary>
     /// 根据传入的一个骰子数据生成并显示一个骰子六个面的数据
     /// </summary>
-    public void CreateDiceView(/*Data of a dice*/)
+    public void CreateDiceView(DiceData dice)
     {
+        diceViewPrefab = Resources.Load<GameObject>("Prefabs/DiceViewPrefab");
         GameObject obj = Instantiate(diceViewPrefab, diceField);
 
         DiceView dv = obj.GetComponent<DiceView>();
+
+        //显示骰子六个面
+        dv.Show(dice);
 
         //根据骰子显示区域的宽度改变图片大小
         dv.SetSize(diceField.GetComponent<RectTransform>().sizeDelta.x);
@@ -76,25 +84,26 @@ public class CharacterInfo : MonoBehaviour
     /// <summary>
     /// 清空已有的骰子对象，重新生成列表中的全部骰子
     /// </summary>
-    public void ShowDices(/*List<Data of dice>*/)
+    public void ShowDices(List<DiceData> dices)
     {
         ClearDiceView();
 
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < dices.Count; i++)
         {
-            CreateDiceView();
+            CreateDiceView(dices[i]);
         }
     }
 
-    public void ShowCharacter(/*Data of a character*/)
+    public void ShowCharacter(CharacterData cd)
     {
-        //SetName("");
-        //SetGender(true);
-        //SetHealth(1, 1);
-        //SetImage();
-        //SetLevel(1);
+        Debug.Log("show character");
+        SetName(cd.name);
+        SetGender(cd.gender);
+        SetHealth(cd.hp, cd.maxHp);
+        SetImage(cd.portrait);
+        SetLevel(cd.level);
 
-        ShowDices();
+        ShowDices(cd.dices);
     }
 
 
@@ -104,6 +113,7 @@ public class CharacterInfo : MonoBehaviour
     /// </summary>
     private void ClearDiceView()
     {
+        //Debug.Log("delete dice views");
         for(int i = 0; i < diceViewList.Count; i++)
         {
             

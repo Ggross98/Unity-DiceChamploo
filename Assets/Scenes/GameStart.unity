@@ -1766,8 +1766,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -122, y: 2}
-  m_SizeDelta: {x: 174.62363, y: 326.3859}
+  m_AnchoredPosition: {x: -121, y: 2}
+  m_SizeDelta: {x: 193.62949, y: 361.9094}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1242543228
 MonoBehaviour:
@@ -1782,7 +1782,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.6745283, b: 0.6745283, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2148,8 +2148,9 @@ GameObject:
   - component: {fileID: 1335226750}
   - component: {fileID: 1335226752}
   - component: {fileID: 1335226751}
+  - component: {fileID: 1335226753}
   m_Layer: 5
-  m_Name: Teammate
+  m_Name: SecondCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2214,6 +2215,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1335226749}
   m_CullTransparentMesh: 0
+--- !u!114 &1335226753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1335226749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d9869ff371009547a1726a12fe57580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portrait: {fileID: 0}
+  nameText: {fileID: 0}
+  healthText: {fileID: 0}
+  genderText: {fileID: 0}
+  levelText: {fileID: 0}
+  diceField: {fileID: 0}
 --- !u!1 &1467233487
 GameObject:
   m_ObjectHideFlags: 0
@@ -2437,7 +2456,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1504454015}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2081720617}
+        m_MethodName: ChangeTeammate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1504454015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2804,7 +2834,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1675117458}
   m_OnClick:
     m_PersistentCalls:
@@ -3213,8 +3243,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -122, y: 2}
-  m_SizeDelta: {x: 174.62363, y: 326.3859}
+  m_AnchoredPosition: {x: -115, y: 2}
+  m_SizeDelta: {x: 193.62949, y: 361.9094}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1948815677
 MonoBehaviour:
@@ -3229,7 +3259,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
+<<<<<<< Updated upstream
   m_Color: {r: 1, g: 0.6745283, b: 0.6745283, a: 1}
+=======
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+>>>>>>> Stashed changes
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3385,6 +3419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e352625e09806a746a275bd8df888a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCharacterInfo: {fileID: 964575275}
+  secondCharacterInfo: {fileID: 1254863967}
 --- !u!4 &2081720618
 Transform:
   m_ObjectHideFlags: 0

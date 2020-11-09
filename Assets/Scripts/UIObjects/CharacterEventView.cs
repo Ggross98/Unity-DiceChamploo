@@ -13,7 +13,7 @@ public class CharacterEventView : MonoBehaviour
 
     public Button button;
 
-    public void SetImage(Sprite s)
+    private void SetImage(Sprite s)
     {
         portrait.sprite = s;
     }
@@ -32,4 +32,16 @@ public class CharacterEventView : MonoBehaviour
         portrait.rectTransform.rotation = new Quaternion(0,a ? 180 :0,0,0);
     }
 
+<<<<<<< Updated upstream
+=======
+    public void ShowCharacter(CharacterData data)
+    {
+        SetImage(data.portrait);
+    }
+
+    public void SetSize(float height)
+    {
+        GetComponent<RectTransform>().sizeDelta = new Vector2(0.47f*height, height);
+    }
+>>>>>>> Stashed changes
 }

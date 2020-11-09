@@ -63,7 +63,7 @@ public class AudioManager: SingletonTemplate<AudioManager>
         {
 
             _soundDictionary.Add(item.name, item);
-            Debug.Log(item.name);
+            //Debug.Log(item.name);
 
         }
 

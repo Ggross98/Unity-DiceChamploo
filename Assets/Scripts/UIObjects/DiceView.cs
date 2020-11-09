@@ -16,7 +16,7 @@ public class DiceView : MonoBehaviour
 
     public Image[] images;
 
-    public void AddDiceFace(/**/) { }
+    //public void AddDiceFace(/**/) { }
 
     public void Show()
     {
@@ -26,22 +26,32 @@ public class DiceView : MonoBehaviour
         }
     }
 
+    public void Show(DiceData dice)
+    {
+        DiceFaceData[] faces = dice.faces;
+        images = GetComponentsInChildren<Image>();
+
+
+
+        for (int i = 0; i < faces.Length; i++)
+        {
+            images[i].sprite = faces[i].icon;
+            //Debug.Log("i "+i);
+        }
+    }
+
     private void Awake()
     {
         
-
-        sprites = Resources.LoadAll<Sprite>("Dice");
+        
+        //sprites = Resources.LoadAll<Sprite>("Dice");
         images = GetComponentsInChildren<Image>();
-
-        if(sprites.Length!= images.Length)
-        {
-            Debug.LogError("dice resources error!");
-        }
+        
     }
 
     private void Start()
     {
-        Show();
+        //Show();
     }
 
     public void SetSize(float totalWidth)

@@ -10,9 +10,10 @@ using DG.Tweening;
 public class DiceObject : MonoBehaviour
 {
     //储存骰子某一面的信息
-    //Data[] contents = new T[6];
+    public DiceData diceData;
+    private DiceFaceData[] faces;
 
-    Sprite[] sprites;
+    Sprite[] sprites = new Sprite[6];
 
     [SerializeField]
     Image image;
@@ -20,8 +21,20 @@ public class DiceObject : MonoBehaviour
     public static float animInterval = 0.05f;
     public static int animCount = 10;
 
+    public void Init(DiceData dice)
+    {
+        diceData = dice;
+        faces = dice.faces;
+
+        for(int i = 0; i < 6; i++)
+        {
+            sprites[i] = faces[i].icon;
+        }
+
+        image.sprite = sprites[0];
+    }
     
-    public /*Data*/ void Roll()
+    public DiceFaceData Roll()
     {
         int i = Random.Range(0, 6);
 
@@ -30,7 +43,7 @@ public class DiceObject : MonoBehaviour
 
         StartCoroutine(ShowRollAnimation(animCount, animInterval, i));
 
-        //return result;
+        return faces[i];
     }
 
     private IEnumerator ShowRollAnimation(int count, float interval, int target)
@@ -45,19 +58,21 @@ public class DiceObject : MonoBehaviour
         yield return null;
     }
 
-    public void RollTo(Vector2 pos, float angle)
+    public DiceFaceData RollTo(Vector2 pos, float angle)
     {
 
-        MoveTo(pos);
-        RotateTo(angle);
-
+        
         int i = Random.Range(0, 6);
 
-        //result = contents[i];
-        ChangeScale(0.8f);
-
         StartCoroutine(ShowRollAnimation(animCount, animInterval, i));
+        MoveTo(pos);
+        RotateTo(angle);
+        ChangeScale(0.5f);
 
+        
+        //image.sprite = sprites[i];
+
+        return faces[i];
     }
 
     public void MoveTo(Vector2 pos)
@@ -81,12 +96,12 @@ public class DiceObject : MonoBehaviour
 
     private void Start()
     {
-        image.sprite = sprites[0];
+        //image.sprite = sprites[0];
     }
 
     private void Awake()
     {
-        sprites= Resources.LoadAll<Sprite>("Dice");
+        //sprites= Resources.LoadAll<Sprite>("Dice");
     }
 
 

@@ -12,6 +12,8 @@ public class TeamEventView : MonoBehaviour
 
     [SerializeField]
     CharacterInfo info; //上方信息栏
+
+    private CharacterData selectedCharacter;
     
     
     //下方队伍成员的预制体和列表
@@ -22,6 +24,12 @@ public class TeamEventView : MonoBehaviour
 
     [SerializeField]
     Transform characterEventViewField; //显示玩家角色的区域，使用水平网格布局
+
+    private float fieldWidth = 200, fieldHeight = 200; //角色区域的大小
+
+
+    [SerializeField]
+    Text teamCountText;
 
 
     bool enemy = false;
@@ -41,11 +49,14 @@ public class TeamEventView : MonoBehaviour
     /// <summary>
     /// 创建下方显示的角色立绘对象
     /// </summary>
-    public void CreateCharacterObjects(/*传入队伍信息*/)
+    public void CreateCharacterObjects(List<CharacterData> characters)
     {
+        if (characters == null || characters.Count < 0) return;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < characters.Count; i++)
         {
+            CharacterData c = characters[i];
+
             GameObject obj = Instantiate(characterEventViewPrefab, characterEventViewField);
 
             obj.name = "角色" + (i + 1);
@@ -53,11 +64,17 @@ public class TeamEventView : MonoBehaviour
             CharacterEventView view = obj.GetComponent<CharacterEventView>();
             characterEventViewList.Add(view);
 
-            //view.SetEnemy(false);
+            view.ShowCharacter(c);
+            //设置大小
+            view.SetSize(fieldHeight);
 
             view.GetButton().onClick.AddListener(delegate
             {
-                ShowCharacterInfo();
+                Debug.Log("click character");
+                selectedCharacter = c;
+
+                info.gameObject.SetActive(true);
+                info.ShowCharacter(selectedCharacter);
             });
 
         }
@@ -65,17 +82,11 @@ public class TeamEventView : MonoBehaviour
         
     }
 
-    public void ShowCharacterInfo(/*传入选中的角色数据*/)
+    public void ShowCharacterInfo(CharacterData cd)
     {
-        info.SetActive(true);
+        //info.SetActive(true);
 
-        info.SetName("姓名");
-        info.SetHealth(1,1);
-        info.SetGender(true);
-        info.SetLevel(1);
-
-        //展示角色拥有的全部骰子
-        info.ShowDices();
+        info.ShowCharacter(cd);
     }
 
     public void HideCharacterInfo()
@@ -97,6 +108,9 @@ public class TeamEventView : MonoBehaviour
     private void Awake()
     {
         characterEventViewPrefab = Resources.Load<GameObject>("Prefabs/CharacterEventViewPrefab");
+
+        fieldWidth = characterEventViewField.GetComponent<RectTransform>().sizeDelta.x;
+        fieldHeight = characterEventViewField.GetComponent<RectTransform>().sizeDelta.y;
     }
 
 }

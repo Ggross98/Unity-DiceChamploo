@@ -14,12 +14,11 @@ public class GameData
 
     public float time; //in seconds
 
-    /// <summary>
-    /// 清空数据
-    /// </summary>
-    public void Clear()
-    {
+    public int skillPoint = 99;
 
-    }
+
+    public TeamData playerTeamData;
+
+
 
 }

@@ -16,13 +16,15 @@ public class DiceObjectPanel : MonoBehaviour
 
     private float fieldWidth = 200, fieldHeight = 200; //骰子区域的大小
 
-    public /*返回所有骰子面的信息*/ void RollAllDices()
+    public List<DiceFaceData> RollAllDices()
     {
         /*
         if(diceObjects.Count == 0)
         {
             CreateDiceObjects();
         }*/
+
+        List<DiceFaceData> list = new List<DiceFaceData>();
 
         foreach (DiceObject obj in diceObjects)
         {
@@ -31,10 +33,13 @@ public class DiceObjectPanel : MonoBehaviour
             float y = Random.Range(fieldHeight * 0.1f, fieldHeight * 0.9f);
             //obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(x-fieldWidth/2, y-fieldHeight/2);
 
-            float angle = Random.Range(-90, 90);
+            float angle = Random.Range(-180, 180);
 
-            obj.RollTo(new Vector2(x - fieldWidth / 2, y - fieldHeight / 2), angle);
+            DiceFaceData dfd = obj.RollTo(new Vector2(x - fieldWidth / 2, y - fieldHeight / 2), angle);
+            list.Add(dfd);
         }
+
+        return list;
     }
 
     public bool IsEmpty()
@@ -67,6 +72,43 @@ public class DiceObjectPanel : MonoBehaviour
 
             diceObjects.Add(obj);
         }
+    }
+
+    /// <summary>
+    /// 根据角色生成其拥有的全部骰子
+    /// </summary>
+    /// <param name="characters"></param>
+    public void CreateDiceObjects(List<CharacterData> characters)
+    {
+        int count = 0;
+
+        foreach(CharacterData c in characters){
+
+            List<DiceData> dices = c.dices;
+
+            foreach(DiceData d in dices)
+            {
+                GameObject dice = Instantiate(diceObjectPrefab, diceField);
+                DiceObject obj = dice.GetComponent<DiceObject>();
+
+                obj.Init(d);
+
+                diceObjects.Add(obj);
+
+                count++;
+            }
+        }
+
+        //摆成一个圆形
+        float deltaAngle = 360f / count * Mathf.PI / 180;
+        float r = Mathf.Min(fieldWidth, fieldHeight) / 3;
+
+        for(int i = 0; i < diceObjects.Count; i++)
+        {
+            diceObjects[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(r * Mathf.Cos(deltaAngle * i), r * Mathf.Sin(deltaAngle * i));
+
+        }
+
     }
 
     public void ClearDiceObjects()

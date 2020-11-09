@@ -8,26 +8,64 @@ using UnityEngine.UI;
 /// </summary>
 public class GameMapScene : SceneStateBase
 {
+<<<<<<< Updated upstream
     #region 与中介类交互部分
+=======
+    #region 数据交互部分
+>>>>>>> Stashed changes
 
     //1、玩家队伍数据。从中介类读取、向其写入
-    //TeamData team;
-    //List<CharacterData> characters
+    TeamData team;
+    List<CharacterData> characters;
 
     //选中的角色
-    //CharacterData selectedCharacter;
+    CharacterData selectedCharacter;
 
 
     //2、事件数据，由此生成地图ui。只从中介类读取
     //List<EventData> events;
 
-    private void CreateMapEventView() { }
+    //private void CreateMapEventView() { }
 
     
-    //升级、解雇等操作
-    public void Upgrade() { }
+    /// <summary>
+    /// 升级当前选中角色
+    /// </summary>
+    public void Upgrade() {
 
-    public void Dismiss() { }
+        if (selectedCharacter == null) return;
+
+        if (GameController.Instance.UpgradeCharacter(selectedCharacter))
+        {
+            //刷新ui显示
+            RefreshUIObjects();
+
+            characterInfo.ShowCharacter(selectedCharacter);
+        }
+    }
+
+    /// <summary>
+    /// 解雇当前角色
+    /// </summary>
+    public void Dismiss() {
+
+        if (selectedCharacter == null) return;
+
+        //决定删除之后选定的角色
+        int index = characters.FindIndex(a => a==selectedCharacter);
+        if (index == characters.Count - 1) index--;
+
+        if (GameController.Instance.DismissCharacter(selectedCharacter))
+        {
+            //刷新ui显示
+            RefreshUIObjects();
+
+            selectedCharacter = characters[index];
+            characterInfo.ShowCharacter(selectedCharacter);
+        }
+
+        
+    }
 
     
 
@@ -47,6 +85,9 @@ public class GameMapScene : SceneStateBase
     [SerializeField]
     Transform characterViewField;
 
+    [SerializeField]
+    Text teamCountText;
+
     GameObject characterViewPrefab; //单个角色预览的预制体
     List<CharacterView> characterViewList = new List<CharacterView>();
 
@@ -57,6 +98,12 @@ public class GameMapScene : SceneStateBase
     [SerializeField]
     CharacterInfo characterInfo;
 
+<<<<<<< Updated upstream
+=======
+    [SerializeField]
+    Button upgradeButton, dismissButton;
+
+>>>>>>> Stashed changes
 
     //****************************地图面板
 
@@ -185,14 +232,17 @@ public class GameMapScene : SceneStateBase
         }
 
         //加载队伍数据
+        team = GameController.Instance.gameData.playerTeamData;
+        characters = team.characters;
 
         //生成左侧队伍预览
         for(int i = 0; i < 5; i++)
         {
             GameObject obj = Instantiate(characterViewPrefab, characterViewField);
-            obj.name = "角色" + (i + 1);
+            obj.name = "角色预览" + (i + 1);
 
             CharacterView view = obj.GetComponent<CharacterView>();
+<<<<<<< Updated upstream
             //Debug.Log(view);
 
             //view.SetHealth(20, 20);
@@ -221,18 +271,25 @@ public class GameMapScene : SceneStateBase
 
             characterViewList.Add(view);
         }
+=======
+            
+            characterViewList.Add(view);
+        }
+
+        RefreshUIObjects();
+>>>>>>> Stashed changes
 
         
 
-        characterInfo.ShowCharacter();
+        //characterInfo.ShowCharacter();
 
         //生成队伍编辑面板
         teamEditPanel.SetActive(false);
 
         //状态栏数据
-        status.SetGold(0);
+        /*status.SetGold(0);
         status.SetTime(61f);
-        status.SetLevel("1-1");
+        status.SetLevel("1-1");*/
 
         //生成暂停面板
         pausePanel = Instantiate(Resources.Load<GameObject>("Prefabs/PausePanel"), GameObject.Find("Canvas").transform).GetComponent<PausePanel>();
@@ -247,9 +304,48 @@ public class GameMapScene : SceneStateBase
 
     protected override void RefreshUIObjects()
     {
-        
+
+<<<<<<< Updated upstream
+=======
+        //刷新队伍预览
+
+        teamCountText.text = team.Count() + "/5";
+
+        for (int i = 0; i < characterViewList.Count; i++)
+        {
+            
+            CharacterView view = characterViewList[i];
+
+            view.GetButton().onClick.RemoveAllListeners();
+
+            if (i < characters.Count)
+            {
+                view.SetInteractive(true);
+                //view.data = characters[i];
+                CharacterData cd = characters[i];
+
+                view.ShowCharacter(cd);
+
+                view.GetButton().onClick.AddListener(delegate
+                {
+                    selectedCharacter = cd;
+
+                    characterInfo.ShowCharacter(selectedCharacter);
+
+                    SwitchPanelTo(CurrentPanel.TEAM);
+
+                });
+            }
+            else
+            {
+                view.ShowCharacter(null);
+                view.SetInteractive(false);
+            }
+            
+        }
     }
 
+>>>>>>> Stashed changes
     private void Start()
     {
         base.Start();

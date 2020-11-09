@@ -10,7 +10,7 @@ public class CharacterView : MonoBehaviour
 {
     public Image portrait;
 
-    public Image healthBar;
+    //public Image healthBar;
 
     public Image lockIcon;
 
@@ -18,6 +18,11 @@ public class CharacterView : MonoBehaviour
 
     public Button button;
 
+<<<<<<< Updated upstream
+=======
+    //public CharacterData data;
+
+>>>>>>> Stashed changes
 
     public void SetInteractive(bool a)
     {
@@ -26,21 +31,41 @@ public class CharacterView : MonoBehaviour
         lockIcon.gameObject.SetActive(!a);
     }
 
+    public void ShowCharacter(CharacterData cd)
+    {
+        if(cd == null)
+        {
+            nameText.text = "";
+            healthText.text = "";
+
+        }
+        else
+        {
+            SetName(cd.name);
+            SetHealth(cd.hp, cd.maxHp);
+            SetPortrait(cd.portrait);
+        }
+    }
 
 
+
+<<<<<<< Updated upstream
     public void SetName(string s)
+=======
+    private void SetName(string s)
+>>>>>>> Stashed changes
     {
         nameText.text = s;
     }
 
-    public void SetPortrait(Sprite s)
+    private void SetPortrait(Sprite s)
     {
 
         portrait.sprite = s;
 
     }
 
-    public void SetHealth(int hp, int maxHp)
+    private void SetHealth(int hp, int maxHp)
     {
         healthText.text = hp + "/" + maxHp;
 

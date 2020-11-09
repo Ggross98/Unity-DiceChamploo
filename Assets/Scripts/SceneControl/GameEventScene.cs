@@ -12,8 +12,8 @@ public class GameEventScene : SceneStateBase
     #region 与中介类交互
 
     //1、玩家队伍数据。从中介类读取、向其写入
-    //TeamData team;
-    //List<CharacterData> characters
+    TeamData team;
+    List<CharacterData> characters;
 
     //2、事件数据，只从中介类读取
     //EventData event;
@@ -74,14 +74,19 @@ public class GameEventScene : SceneStateBase
     protected override void LoadUIObjects()
     {
         //1、从中介类读取数据，包括事件及选项、玩家的队伍数据等
-        //EventData, OptionData, CharacterData
+        team = GameController.Instance.gameData.playerTeamData;
+        characters = team.characters;
 
         //2、改变背景图
         //background.sprite = null;
 
         //3、创建角色UI
 
+<<<<<<< Updated upstream
         playerTeamView.CreateCharacterObjects();
+=======
+        playerTeamView.CreateCharacterObjects(characters);
+>>>>>>> Stashed changes
         playerTeamView.HideCharacterInfo();
   
 
@@ -122,9 +127,9 @@ public class GameEventScene : SceneStateBase
         });
 
         //状态栏数据
-        status.SetGold(0);
+        /*status.SetGold(0);
         status.SetTime(61f);
-        status.SetLevel("1-1");
+        status.SetLevel("1-1");*/
 
 
         //生成骰子对象
@@ -143,14 +148,18 @@ public class GameEventScene : SceneStateBase
     }
 
     
-    public /*返回所有骰子面的信息*/ void RollAllDices()
+    public List<DiceFaceData> RollAllDices()
     {
         if (diceObjectPanel.IsEmpty())
         {
-            diceObjectPanel.CreateDiceObjects();
+            diceObjectPanel.CreateDiceObjects(characters);
         }
 
+<<<<<<< Updated upstream
         diceObjectPanel.RollAllDices();
+=======
+        return diceObjectPanel.RollAllDices();
+>>>>>>> Stashed changes
     }
 
 

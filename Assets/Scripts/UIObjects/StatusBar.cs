@@ -11,23 +11,33 @@ public class StatusBar : MonoBehaviour
 
     //public Transform buttonField;
 
-    public void SetGold(int g)
+    private void SetGold(int g)
     {
         goldText.text = "$" + g;
 
     }
 
-    public void SetTime(float seconds)
+    private void SetTime(float seconds)
     {
         timeText.text = Utils.FormatTime(seconds);
 
     }
 
-    public void SetLevel(string s)
+    private void SetLevel(string s)
     {
         levelText.text = "level "+s;
     }
 
-    
+    private void Update()
+    {
+        GameData gd = GameController.Instance.gameData;
+
+        SetGold(gd.gold);
+        SetTime(gd.time);
+        //TODO: 显示关卡
+        SetLevel("1-1");
+    }
+
+
 
 }
