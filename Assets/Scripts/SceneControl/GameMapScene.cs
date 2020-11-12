@@ -6,13 +6,9 @@ using UnityEngine.UI;
 /// <summary>
 /// 地图场景，包括两个主要面板：地图和队伍编辑
 /// </summary>
-public class GameMapScene : SceneStateBase
+public class GameMapScene : SceneStateBase<GameMapScene>
 {
-<<<<<<< Updated upstream
-    #region 与中介类交互部分
-=======
     #region 数据交互部分
->>>>>>> Stashed changes
 
     //1、玩家队伍数据。从中介类读取、向其写入
     TeamData team;
@@ -98,12 +94,9 @@ public class GameMapScene : SceneStateBase
     [SerializeField]
     CharacterInfo characterInfo;
 
-<<<<<<< Updated upstream
-=======
     [SerializeField]
     Button upgradeButton, dismissButton;
 
->>>>>>> Stashed changes
 
     //****************************地图面板
 
@@ -242,42 +235,11 @@ public class GameMapScene : SceneStateBase
             obj.name = "角色预览" + (i + 1);
 
             CharacterView view = obj.GetComponent<CharacterView>();
-<<<<<<< Updated upstream
-            //Debug.Log(view);
-
-            //view.SetHealth(20, 20);
-            view.SetName("角色" + (i+1));
-            //view.SetPortrait(null);
-
-            view.GetButton().onClick.AddListener(delegate
-            {
-                characterInfo.SetName(obj.name);
-                characterInfo.ShowCharacter();
-
-                SwitchPanelTo(CurrentPanel.TEAM);
-
-            });
-
-            //测试：将头像锁定
-            if(i == 4)
-            {
-                view.SetInteractive(false);
-            }
-            else
-            {
-                view.SetInteractive(true);
-            }
-
-
-            characterViewList.Add(view);
-        }
-=======
             
             characterViewList.Add(view);
         }
 
         RefreshUIObjects();
->>>>>>> Stashed changes
 
         
 
@@ -305,8 +267,6 @@ public class GameMapScene : SceneStateBase
     protected override void RefreshUIObjects()
     {
 
-<<<<<<< Updated upstream
-=======
         //刷新队伍预览
 
         teamCountText.text = team.Count() + "/5";
@@ -345,7 +305,6 @@ public class GameMapScene : SceneStateBase
         }
     }
 
->>>>>>> Stashed changes
     private void Start()
     {
         base.Start();

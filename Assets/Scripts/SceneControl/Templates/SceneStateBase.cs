@@ -4,13 +4,15 @@ using UnityEngine;
 /// <summary>
 /// 场景管理类的模板
 /// </summary>
-public abstract class SceneStateBase : MonoBehaviour
+public abstract class SceneStateBase<T> : MonoBehaviour where T: MonoBehaviour
 {
-    public static SceneStateBase Instance;
+    public static T Instance;
 
     protected void Awake()
     {
-        Instance = this;
+        Instance = GetComponent<T>();
+
+        if (Instance == null) Instance = gameObject.AddComponent<T>();
 
         LoadPrefabs();
     }

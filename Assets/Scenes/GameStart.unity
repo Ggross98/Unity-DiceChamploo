@@ -3259,11 +3259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-<<<<<<< Updated upstream
-  m_Color: {r: 1, g: 0.6745283, b: 0.6745283, a: 1}
-=======
   m_Color: {r: 1, g: 1, b: 1, a: 1}
->>>>>>> Stashed changes
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:

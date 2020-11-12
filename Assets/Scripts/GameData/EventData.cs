@@ -122,7 +122,7 @@ class EventData
 
     }*/
     //***********************数据库**************************
-    public static Event0 = new EventData(
+    public static /*EventData*/ Event0 = new EventData(
         "遭遇劫匪",
         new List<Movement>(){
             Movement.m0_0,

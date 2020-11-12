@@ -13,7 +13,9 @@ public class TeamEventView : MonoBehaviour
     [SerializeField]
     CharacterInfo info; //上方信息栏
 
-    private CharacterData selectedCharacter;
+    [HideInInspector]
+    public CharacterData selectedCharacter;
+
     
     
     //下方队伍成员的预制体和列表
@@ -21,6 +23,7 @@ public class TeamEventView : MonoBehaviour
 
     private List<CharacterEventView> characterEventViewList = new List<CharacterEventView>();
 
+    private Dictionary<CharacterData, CharacterEventView> characters = new Dictionary<CharacterData, CharacterEventView>();
 
     [SerializeField]
     Transform characterEventViewField; //显示玩家角色的区域，使用水平网格布局
@@ -31,8 +34,10 @@ public class TeamEventView : MonoBehaviour
     [SerializeField]
     Text teamCountText;
 
+    public TeamData team;
 
-    bool enemy = false;
+
+    public bool enemy = false;
 
     public void SetEnemy(bool e)
     {
@@ -46,16 +51,23 @@ public class TeamEventView : MonoBehaviour
         }
     }
 
+    public void CreateCharacterObjects(TeamData td)
+    {
+        team = td;
+
+        CreateCharacterObjects(team.characters);
+    }
+
     /// <summary>
     /// 创建下方显示的角色立绘对象
     /// </summary>
-    public void CreateCharacterObjects(List<CharacterData> characters)
+    public void CreateCharacterObjects(List<CharacterData> chs)
     {
-        if (characters == null || characters.Count < 0) return;
+        if (chs == null || chs.Count < 0) return;
 
-        for (int i = 0; i < characters.Count; i++)
+        for (int i = 0; i < chs.Count; i++)
         {
-            CharacterData c = characters[i];
+            CharacterData c = chs[i];
 
             GameObject obj = Instantiate(characterEventViewPrefab, characterEventViewField);
 
@@ -70,17 +82,77 @@ public class TeamEventView : MonoBehaviour
 
             view.GetButton().onClick.AddListener(delegate
             {
-                Debug.Log("click character");
+                //Debug.Log("click character");
                 selectedCharacter = c;
+
+                CancelSelectAll();
+                view.ShowAura(true);
 
                 info.gameObject.SetActive(true);
                 info.ShowCharacter(selectedCharacter);
             });
 
+            characters.Add(c, view);
+
         }
 
         
     }
+
+    /// <summary>
+    /// 所有角色是否均死亡
+    /// </summary>
+    /// <returns></returns>
+    public bool IsOver()
+    {
+        return characters.Count <= 0;
+    }
+
+    public void Refresh()
+    {
+        List<CharacterData> toRemove = new List<CharacterData>();
+        List<GameObject> toKill = new List<GameObject>();
+
+        //检查成员是否均存活。删除死亡对象
+        foreach(CharacterData cd in characters.Keys)
+        {
+            if (!cd.IsAlive())
+            {
+                toRemove.Add(cd);
+                
+                CharacterEventView view = characters[cd];
+
+                toKill.Add(view.gameObject);
+            }
+        }
+
+        for(int i = 0; i < toRemove.Count; i++)
+        {
+            if (selectedCharacter == toRemove[i])
+                selectedCharacter = null;
+            characters.Remove(toRemove[i]);
+        }
+
+        for(int i = 0; i < toKill.Count; i++)
+        {
+            Destroy(toKill[i]);
+        }
+
+        if (info.isActiveAndEnabled)
+        {
+            info.ShowCharacter(selectedCharacter);
+        }
+    }
+
+    private void CancelSelectAll()
+    {
+        foreach(CharacterEventView view in characterEventViewList)
+        {
+            view.ShowAura(false);
+        }
+    }
+
+    
 
     public void ShowCharacterInfo(CharacterData cd)
     {

@@ -35,11 +35,7 @@ public class CharacterInfo : MonoBehaviour
         healthText.text = hp + "/" + max;
     }
 
-<<<<<<< Updated upstream
-    public void SetGender(bool g)
-=======
     void SetGender(bool g)
->>>>>>> Stashed changes
     {
         genderText.text = g ? "♂" : "♀";
     }
@@ -96,14 +92,21 @@ public class CharacterInfo : MonoBehaviour
 
     public void ShowCharacter(CharacterData cd)
     {
-        Debug.Log("show character");
-        SetName(cd.name);
-        SetGender(cd.gender);
-        SetHealth(cd.hp, cd.maxHp);
-        SetImage(cd.portrait);
-        SetLevel(cd.level);
+        if(cd == null)
+        {
+            SetActive(false);
+        }
+        else
+        {
+            SetName(cd.name);
+            SetGender(cd.gender);
+            SetHealth(cd.hp, cd.maxHp);
+            SetImage(cd.portrait);
+            SetLevel(cd.level);
 
-        ShowDices(cd.dices);
+            ShowDices(cd.dices);
+        }
+        
     }
 
 

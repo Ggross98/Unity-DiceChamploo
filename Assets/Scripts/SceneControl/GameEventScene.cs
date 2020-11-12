@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 事件场景
 /// </summary>
-public class GameEventScene : SceneStateBase
+public class GameEventScene : SceneStateBase<GameEventScene>
 {
 
     #region 与中介类交互
@@ -82,11 +82,7 @@ public class GameEventScene : SceneStateBase
 
         //3、创建角色UI
 
-<<<<<<< Updated upstream
-        playerTeamView.CreateCharacterObjects();
-=======
         playerTeamView.CreateCharacterObjects(characters);
->>>>>>> Stashed changes
         playerTeamView.HideCharacterInfo();
   
 
@@ -155,11 +151,7 @@ public class GameEventScene : SceneStateBase
             diceObjectPanel.CreateDiceObjects(characters);
         }
 
-<<<<<<< Updated upstream
-        diceObjectPanel.RollAllDices();
-=======
         return diceObjectPanel.RollAllDices();
->>>>>>> Stashed changes
     }
 
 

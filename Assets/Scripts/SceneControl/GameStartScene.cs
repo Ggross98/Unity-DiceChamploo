@@ -6,7 +6,7 @@ using UnityEngine;
 /// 难度选择场景
 /// 功能包括：选择难度；选择主角；选择初始队友
 /// </summary>
-public class GameStartScene : SceneStateBase
+public class GameStartScene : SceneStateBase<GameStartScene>
 {
 
     #region ui组件
@@ -48,8 +48,6 @@ public class GameStartScene : SceneStateBase
         GameController.Instance.LoadScene("GameMap");
     }
 
-<<<<<<< Updated upstream
-=======
     public void ChangeTeammate()
     {
         teamIndex++;
@@ -60,7 +58,6 @@ public class GameStartScene : SceneStateBase
         RefreshUIObjects();
     }
 
->>>>>>> Stashed changes
     protected override void LoadUIObjects()
     {
         //1、生成两个角色的数据，并显示在信息栏中

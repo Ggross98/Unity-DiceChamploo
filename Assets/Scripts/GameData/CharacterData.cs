@@ -45,6 +45,23 @@ public class CharacterData
         //深度拷贝代码有问题，先凑合着用
     }
 
+    public void ChangeHP(int delta)
+    {
+        hp += delta;
+        if (hp < 0) hp = 0;
+        if (hp > maxHp) hp = maxHp;
+    }
+
+    public void Damage(int i)
+    {
+        ChangeHP(-i);
+    }
+
+    public bool IsAlive()
+    {
+        return hp > 0;
+    }
+
     public CharacterData()
     {
         index = 0;
@@ -126,22 +143,23 @@ public class CharacterData
     "主角团1",
     true,
     3,
-    new int[] { 40, 50, 60 },
+    new int[] { 5, 10, 15 },
     Resources.Load<Sprite>("Characters/MainCharacters/1"),
     new List<DiceData>[]
     {
             new List<DiceData>(){
-                DiceData.DiceData_TestOne
+                DiceData.GetDiceDataModel("Red_A1")
 
             },
             new List<DiceData>(){
-                DiceData.DiceData_TestOne,
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Red_A2")
+
 
             },
             new List<DiceData>(){
-                DiceData.DiceData_TestOne,
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Red_A2"),
+                DiceData.GetDiceDataModel("Red_A1")
+
 
             }
     }
@@ -154,51 +172,52 @@ public class CharacterData
         "主角团2",
         true,
         3,
-        new int[] {10,20,30},
+        new int[] {5,10,15},
         Resources.Load<Sprite>("Characters/MainCharacters/2"),
         new List<DiceData>[]
-        {
+    {
             new List<DiceData>(){
-                DiceData.DiceData_TestOne
+                DiceData.GetDiceDataModel("Blue_A1")
 
             },
             new List<DiceData>(){
-                DiceData.DiceData_TestOne,
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Blue_A2")
+
 
             },
             new List<DiceData>(){
-                DiceData.DiceData_TestOne,
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Blue_A2"),
+                DiceData.GetDiceDataModel("Red_A1")
+
 
             }
-        }
+    }
         
-        
-        );
+    
+    );
 
     public static CharacterData MainCharacter_3 = new CharacterData(
         3,
         "主角团3",
         false,
         3,
-        new int[] { 20, 30, 40 },
+        new int[] { 10, 15, 20 },
         Resources.Load<Sprite>("Characters/MainCharacters/3"),
         new List<DiceData>[]
         {
             new List<DiceData>(){
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Green_A1")
 
             },
             new List<DiceData>(){
-                DiceData.DiceData_TestTwo,
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Green_A2")
+
 
             },
             new List<DiceData>(){
-                DiceData.DiceData_TestTwo,
-                DiceData.DiceData_TestTwo,
-                DiceData.DiceData_TestTwo
+                DiceData.GetDiceDataModel("Green_A2"),
+                DiceData.GetDiceDataModel("Red_A1")
+
 
             }
         }

@@ -14,7 +14,7 @@ public class DiceData
     {
         for(int i = 0; i < 6; i++)
         {
-            faces[i] = DiceFaceData.DiceFace_Blank;
+            faces[i] = DiceFaceData.GetDiceFaceModel("Blank");
         }
 
     }
@@ -32,30 +32,142 @@ public class DiceData
 
     #region 数据库
 
-    public static DiceData DiceData_TestOne = new DiceData(
-        
-        new DiceFaceData[]
+    private static Dictionary<string, DiceData> diceDictionary = new Dictionary<string, DiceData>()
+    {
         {
-            DiceFaceData.DiceFace_TestOne,
-            DiceFaceData.DiceFace_TestOne,
-            DiceFaceData.DiceFace_TestOne,
-            DiceFaceData.DiceFace_TestOne,
-            DiceFaceData.DiceFace_TestOne,
-            DiceFaceData.DiceFace_TestOne,
+            "Red_A1",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Attack"),
+                    DiceFaceData.GetDiceFaceModel("Attack"),
+                    DiceFaceData.GetDiceFaceModel("Move"),
+                    DiceFaceData.GetDiceFaceModel("Move"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Red_A2",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Attack"),
+                    DiceFaceData.GetDiceFaceModel("Attack"),
+                    DiceFaceData.GetDiceFaceModel("Attack"),
+                    DiceFaceData.GetDiceFaceModel("Move"),
+                    DiceFaceData.GetDiceFaceModel("Move"),
+                    DiceFaceData.GetDiceFaceModel("Move"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Green_A1",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Handle"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Green_A2",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Defense"),
+                    DiceFaceData.GetDiceFaceModel("Handle"),
+                    DiceFaceData.GetDiceFaceModel("Handle"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Blue_A1",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Observation"),
+                    DiceFaceData.GetDiceFaceModel("Observation"),
+                    DiceFaceData.GetDiceFaceModel("Think"),
+                    DiceFaceData.GetDiceFaceModel("Think"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Blue_A2",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Observation"),
+                    DiceFaceData.GetDiceFaceModel("Observation"),
+                    DiceFaceData.GetDiceFaceModel("Observation"),
+                    DiceFaceData.GetDiceFaceModel("Think"),
+                    DiceFaceData.GetDiceFaceModel("Think"),
+                    DiceFaceData.GetDiceFaceModel("Think"),
+
+
+                }
+
+
+            )
+
+        },
+
+    };
+    
+
+    public static DiceData GetDiceDataModel(string str)
+    {
+        if (diceDictionary.ContainsKey(str))
+        {
+            return diceDictionary[str];
         }
-        
-        );
-
-    public static DiceData DiceData_TestTwo = new DiceData(
-
-       new DiceFaceData[]
-       {
-            DiceFaceData.DiceFace_TestOne,
-            DiceFaceData.DiceFace_TestTwo,
-            DiceFaceData.DiceFace_TestThree,
-       }
-
-       );
+        else
+        {
+            return new DiceData();
+        }
+    }
 
     #endregion
 }

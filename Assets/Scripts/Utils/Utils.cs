@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -68,4 +69,37 @@ public class Utils
     }
 
 
+    public static void SortDiceFaceDataList(List<DiceFaceData> list, bool ascending)
+    {
+        for (int i = 0; i < list.Count-1; i++)
+        {
+            for(int j = i; j < list.Count-1; j++)
+            {
+                if((list[j].index < list[j+1].index && !ascending)|| (list[j].index > list[j + 1].index && ascending))
+                {
+                    DiceFaceData temp = list[j];
+                    list[j] = list[j + 1];
+                    list[j + 1] = temp;
+                }
+            }
+        }
+    }
+    
+    public static string GetComboEffectString(ComboEffect effect)
+    {
+        string str = "";
+
+        switch (effect.type)
+        {
+            case ComboEffect.EffectType.Damage:
+
+                if (!effect.toEnemy) str += "对己方";
+                str += "造成" + effect.value + "伤害。";
+                if (effect.isAreaEffect) str += "群体攻击。";
+
+                break;
+        }
+
+        return str;
+    }
 }

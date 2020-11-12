@@ -9,9 +9,11 @@ using UnityEngine.UI;
 /// </summary>
 public class CharacterEventView : MonoBehaviour
 {
-    public Image portrait;
+    [SerializeField]
+    Image portrait, aura;
 
-    public Button button;
+    [SerializeField]
+    Button button;
 
     private void SetImage(Sprite s)
     {
@@ -23,6 +25,10 @@ public class CharacterEventView : MonoBehaviour
         return button;
     }
 
+    public void ShowAura(bool b)
+    {
+        aura.gameObject.SetActive(b);
+    }
     /// <summary>
     /// 设置是否为敌人角色，若为敌人角色则将图片水平翻转
     /// </summary>
@@ -32,8 +38,6 @@ public class CharacterEventView : MonoBehaviour
         portrait.rectTransform.rotation = new Quaternion(0,a ? 180 :0,0,0);
     }
 
-<<<<<<< Updated upstream
-=======
     public void ShowCharacter(CharacterData data)
     {
         SetImage(data.portrait);
@@ -43,5 +47,9 @@ public class CharacterEventView : MonoBehaviour
     {
         GetComponent<RectTransform>().sizeDelta = new Vector2(0.47f*height, height);
     }
->>>>>>> Stashed changes
+
+    private void Start()
+    {
+        ShowAura(false);
+    }
 }

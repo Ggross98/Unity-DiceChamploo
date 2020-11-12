@@ -343,11 +343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-<<<<<<< Updated upstream
-  m_IsActive: 1
-=======
   m_IsActive: 0
->>>>>>> Stashed changes
 --- !u!224 &387726333
 RectTransform:
   m_ObjectHideFlags: 0
@@ -439,11 +435,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-<<<<<<< Updated upstream
-  m_IsActive: 1
-=======
   m_IsActive: 0
->>>>>>> Stashed changes
 --- !u!224 &534026975
 RectTransform:
   m_ObjectHideFlags: 0
@@ -550,11 +542,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 545511635}
-<<<<<<< Updated upstream
-  m_Enabled: 1
-=======
   m_Enabled: 0
->>>>>>> Stashed changes
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
@@ -834,11 +822,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-<<<<<<< Updated upstream
-  m_IsActive: 0
-=======
   m_IsActive: 1
->>>>>>> Stashed changes
 --- !u!224 &696276836
 RectTransform:
   m_ObjectHideFlags: 0
@@ -910,11 +894,7 @@ GameObject:
   - component: {fileID: 796044407}
   - component: {fileID: 796044406}
   m_Layer: 5
-<<<<<<< Updated upstream
-  m_Name: LevelUpButton
-=======
   m_Name: UpgradeButton
->>>>>>> Stashed changes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1248,11 +1228,7 @@ GameObject:
   - component: {fileID: 1052930136}
   - component: {fileID: 1052930135}
   m_Layer: 5
-<<<<<<< Updated upstream
-  m_Name: FireButton
-=======
   m_Name: DismissButton
->>>>>>> Stashed changes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2171,11 +2147,7 @@ GameObject:
   - component: {fileID: 1809591934}
   - component: {fileID: 1809591933}
   m_Layer: 5
-<<<<<<< Updated upstream
-  m_Name: Text (1)
-=======
   m_Name: TeamCountText
->>>>>>> Stashed changes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

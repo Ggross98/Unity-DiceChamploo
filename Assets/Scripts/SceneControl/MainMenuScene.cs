@@ -6,7 +6,7 @@ using UnityEngine;
 /// 主菜单ui管理类
 /// 
 /// </summary>
-public class MainMenuScene : SceneStateBase
+public class MainMenuScene : SceneStateBase<MainMenuScene>
 {
     protected override void LoadPrefabs()
     {

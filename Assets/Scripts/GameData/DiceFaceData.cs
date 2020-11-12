@@ -13,6 +13,7 @@ public class DiceFaceData
 
     public enum Type { Red, Green, Blue, None };
 
+    
     public Type type = Type.None;
 
     public Sprite icon = null;
@@ -26,9 +27,111 @@ public class DiceFaceData
         icon = i;
     }
 
+    public bool Equals(DiceFaceData obj)
+    {
+        return index == obj.index;
+    }
+
 
     #region 数据库
 
+    private static Dictionary<string, DiceFaceData> diceFaceDictionary = new Dictionary<string, DiceFaceData>() {
+
+        { "Blank",
+            new DiceFaceData(
+                0,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Blank")
+            )
+        },
+
+        { "Attack",
+           new DiceFaceData(
+                10,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Attack")
+            )
+        },
+
+        { "Move",
+           new DiceFaceData(
+                11,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Move")
+            )
+        },
+
+        { "Observation",
+            new DiceFaceData(
+                20,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Observation")
+            )
+        },
+
+        { "Think",
+            new DiceFaceData(
+                21,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Think")
+            )
+        },
+
+        { "Defense",
+            new DiceFaceData(
+                30,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Defense")
+            )
+        },
+
+        { "Handle",
+            new DiceFaceData(
+                31,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Handle")
+            )
+        },
+
+        { "Pistol",
+
+            new DiceFaceData(
+                100,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Blank")
+            )
+
+        },
+
+        { "Rifle",
+
+            new DiceFaceData(
+                101,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Blank")
+            )
+
+        },
+
+
+
+
+    };
+
+    public static DiceFaceData GetDiceFaceModel(string name)
+    {
+        if (diceFaceDictionary.ContainsKey(name))
+        {
+            return diceFaceDictionary[name];
+        }
+        else
+        {
+            return diceFaceDictionary["Blank"];
+        }
+    }
+
+
+    /*
     public static DiceFaceData DiceFace_Blank = new DiceFaceData(
 
         0,
@@ -64,5 +167,6 @@ public class DiceFaceData
 
         );
 
+    */
     #endregion
 }

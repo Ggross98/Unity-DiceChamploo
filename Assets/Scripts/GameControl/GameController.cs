@@ -12,13 +12,10 @@ public class GameController : SingletonTemplate<GameController>
     //一局游戏的全局数据
     public GameData gameData = new GameData();
 
-<<<<<<< Updated upstream
-=======
     public bool playing = false;
 
 
     #region 暂停控制
->>>>>>> Stashed changes
     public bool pause = false;
 
     public void Pause()
@@ -91,6 +88,16 @@ public class GameController : SingletonTemplate<GameController>
         playing = true;
 
         gameData = new GameData();
+
+    }
+
+    public void GameLose()
+    {
+
+    }
+
+    public void GameWin()
+    {
 
     }
 

@@ -18,11 +18,8 @@ public class CharacterView : MonoBehaviour
 
     public Button button;
 
-<<<<<<< Updated upstream
-=======
     //public CharacterData data;
 
->>>>>>> Stashed changes
 
     public void SetInteractive(bool a)
     {
@@ -49,11 +46,7 @@ public class CharacterView : MonoBehaviour
 
 
 
-<<<<<<< Updated upstream
-    public void SetName(string s)
-=======
     private void SetName(string s)
->>>>>>> Stashed changes
     {
         nameText.text = s;
     }
