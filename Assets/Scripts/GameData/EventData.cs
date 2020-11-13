@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-using System.Runtime.Remoting.Messaging;
+//using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
@@ -22,9 +22,9 @@ public class EventSystem
     EventSystem(int n = 3)//初始化指定本局非战斗事件的个数
     {
         isFinish = new bool[n];
-        for(bool i: isFinish)
+        for(int i = 0; i < n; ++i)
         {
-            i = false;
+            isFinish[i] = false;
         }
 
         eventDatas = new List<EventData>{ EventData.Event0, EventData.Event1, EventData.Event2};
@@ -33,7 +33,7 @@ public class EventSystem
 
     public OptionResult CheckOption(int optionNumber, List<DiceFaceData> dice= null)//完成对用户选择的Option的check和结算的工作
     {
-        OptionResult result = eventDatas[currentEvent].movements[currentMovement].checkOption(optionNumber, dice);
+        OptionResult result = eventDatas[currentEvent].movements[currentMovement].CheckOption(optionNumber, dice);
 
         if(result == OptionResult.FailJump)
         {
@@ -51,7 +51,7 @@ public class EventSystem
     {
         if (isFinish[index])
         {
-            Debug.log("跳转错误");
+            //Unity.Debug.log("跳转错误");
             return false;
         }
 
@@ -66,7 +66,7 @@ public class EventSystem
     {
         if (currentMovement == nextMovement)
         {
-            Debug.log("跳转错误");
+            //Debug.log("跳转错误");
             return false;
         }
 
@@ -94,7 +94,7 @@ class EventData
     internal string description;
     //Sprite icon;
 
-    List<Movement> movements;
+    internal List<Movement> movements;
 
     public EventData(string d, List<Movement> m)
     {
@@ -122,7 +122,7 @@ class EventData
 
     }*/
     //***********************数据库**************************
-    public static /*EventData*/ Event0 = new EventData(
+    public static EventData Event0 = new EventData(
         "遭遇劫匪",
         new List<Movement>(){
             Movement.m0_0,
@@ -130,7 +130,7 @@ class EventData
             Movement.m0_2
         });
 
-    public static Event1 = new EventData(
+    public static EventData Event1 = new EventData(
         "遭遇黑帮Ⅰ",
         new List<Movement> { 
             Movement.m1_0,
@@ -140,7 +140,7 @@ class EventData
             Movement.m1_4
         });
 
-    public static Event2 = new EventData(
+    public static EventData Event2 = new EventData(
         "遭遇黑帮 Ⅱ",
         new List<Movement>
         {
@@ -175,7 +175,7 @@ class Movement
     }
     
     //internal IsEnding() { return isEnding; }
-    OptionResult CheckOption(int index, List<DiceFaceData> dices)
+    public OptionResult CheckOption(int index, List<DiceFaceData> dices)
     {
         if (isEnding)
         {
@@ -217,7 +217,7 @@ class Movement
         return result;
     }
     //***********************************数据库**************************
-    public static Movement m0_1 = new Movement(@"你经过一条小巷时，一个手持匕首、满脸凶相的男人向你走来。
+    public static Movement m0_0 = new Movement(@"你经过一条小巷时，一个手持匕首、满脸凶相的男人向你走来。
                 “这位小兄弟，老子最近手头有点紧，借点钱花花呗？”他朝你喊道。
                 ", new List<Option>
                 { Option.option0_0_0,
@@ -225,9 +225,9 @@ class Movement
                 Option.option0_0_2}
                 );
 
-    public static Movement m0_2 = new Movement("男人数了数钱，满意地离开了。他很快消失在了夜色之中");
+    public static Movement m0_1 = new Movement("男人数了数钱，满意地离开了。他很快消失在了夜色之中");
 
-    public static Movement m0_3 = new Movement("“这是你自找的！”男人冲向了你。", true);
+    public static Movement m0_2 = new Movement("“这是你自找的！”男人冲向了你。", true);
 
     public static Movement m1_0 = new Movement(@"几个持刀的混混围住了一位女性。
                 你认出，这些混混是“巨齿鲨”帮会的成员！
@@ -289,12 +289,19 @@ class Option
         nextIndex = null;
     }
 
-    public Option(string d, int[] n = null, Condition c = new Condition(), Operation o = new Operation())
+    public Option(string d, int[] n = null, Condition c = null, Operation o = null)
     {
         description = d;
         nextIndex = n;
-        operation = o;
-        condition = c;
+        if (o == null)
+            operation = new Operation();
+        else
+            operation = o;
+
+        if (c == null)
+            condition = new Condition();
+        else
+            condition = c;
     }
 
     
@@ -309,65 +316,63 @@ class Option
     }
 
     //********************************数据库***************   
-    public static const Option finalOption = new Option();
+    public static Option finalOption = new Option();
 
-    public static const Option option0_0_0 = new Option(
+    public static Option option0_0_0 = new Option(
         "乖乖交钱",
         new int[] {1},
         new GoldCondition(50),
         new GoldOperation(50)
     );
 
-    public static const Option option0_0_1 = new Option(
+    public static Option option0_0_1 = new Option(
         "说服放行",
         new int[] { 2, 3 },
         new DiceColorCondition(0, 0, 2)
     );
 
-    public static const Option option0_0_2 = new Option(
+    public static Option option0_0_2 = new Option(
         "给他一拳",
         new int[] { 2, 3 },
         new DiceColorCondition(1, 0, 0)
     );
 
-    public static const Option option1_0_0 = new Option(
+    public static Option option1_0_0 = new Option(
         "装没看见",
         new int[] { 1 }
     );
 
-    public static const Option option1_0_1 = new Option(
+    public static Option option1_0_1 = new Option(
         "挺身而出",
         new int[] { 2 }
     );
 
-    public static const Option option1_2_0 = new Option(
+    public static Option option1_2_0 = new Option(
         "威胁",
         new int[] { 3, 4 },
         new DiceColorCondition(1,0,2)
     );
     
-    public static const Option option1_2_1 = new Option(
+    public static Option option1_2_1 = new Option(
         "战斗！",
-        new int[] { 4 },
+        new int[] { 4 }
     );
 
-    public static const Option option1_2_2 = new Option(
+    public static Option option1_2_2 = new Option(
         "转身离开",
-        new int[] { 1 },
+        new int[] { 1 }
     );    
 
-    public static const Option option2_0_0 = new Option(
+    public static Option option2_0_0 = new Option(
         "走为上计",
         new int[] { 1, 2},
         new DiceColorCondition(0,1,1)
     );
 
-    public static const Option option2_0_1 = new Option(
+    public static Option option2_0_1 = new Option(
         "战斗！",
-        new int[] { 2 },
+        new int[] { 2 }
     );
-
-    public 
 
 }
 
@@ -395,7 +400,7 @@ class GoldCondition:Condition
 
     public override bool CheckCondition(List<DiceFaceData> dices)
     {
-        return GameController.Instance.gameData.Gold <= value;
+        return GameController.Instance.gameData.gold <= value;
     }
 
     public override string ToString()
@@ -409,7 +414,7 @@ class DiceColorCondition:Condition
     int Red;
     int Blue;
     int Green;
-    DiceColorCondition(int r, int g, int b)
+    public DiceColorCondition(int r, int g, int b)
     {
         Red = r;
         Green = g;
@@ -418,17 +423,17 @@ class DiceColorCondition:Condition
     public override bool CheckCondition(List<DiceFaceData> dices)
     {
         int countR = 0, countG = 0, countB = 0;
-        for(var dice: dices)
+        foreach(var dice in dices)
         {
-            if(dice.type = DiceFaceData.Type.Red)
+            if(dice.type == DiceFaceData.Type.Red)
             {
                 countR++;
             }
-            else if(dice.type = DiceFaceData.Type.Blue)
+            else if(dice.type == DiceFaceData.Type.Blue)
             {
                 countB++;
             }
-            else if(dice.type = DiceFaceData.Type.Green)
+            else if(dice.type == DiceFaceData.Type.Green)
             {
                 countG++;
             }
@@ -442,19 +447,19 @@ class DiceColorCondition:Condition
         string result = "投掷: ";
         string prefix = "";
 
-        if (Red)
+        if (Red > 0)
         {
             result += "红色x" + Red.ToString();
             prefix = ", ";
         }
 
-        if (Green)
+        if (Green > 0)
         {
             result += prefix + "绿色x" + Green.ToString();
             prefix = ", ";
         }
 
-        if (Blue)
+        if (Blue > 0)
         {
             result += prefix + "蓝色x" + Blue.ToString();
         }
@@ -472,7 +477,7 @@ class Operation
 }
 
 //金钱操作，可加可减
-class GoldOperation(): Operation
+class GoldOperation:Operation
 {
     int value;
     public GoldOperation(int val)
@@ -482,7 +487,7 @@ class GoldOperation(): Operation
 
     public override void ExecuteOperation()
     {
-        GameController.Instance.gameData.Gold -= value ;
+        GameController.Instance.gameData.gold -= value ;
     }
 }
 
