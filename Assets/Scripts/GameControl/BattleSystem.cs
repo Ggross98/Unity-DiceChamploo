@@ -23,18 +23,28 @@ public class BattleSystem : MonoBehaviour
 
     TeamEventView playerTeamView, enemyTeamView;
 
+    internal BattleData data;
+
     #endregion
 
 
     #region 回合战斗管理
     TeamData playerTeam, enemyTeam;
 
+    List<CharacterData> deadPlayers;
+
     //List<CharacterData> playerCharacters;
     //List<CharacterData> enemyCharacters;
 
     //CharacterData selectedPlayer, selectedEnemy;
 
-    public bool playerTurn = true;
+    internal bool playerTurn = true;
+    internal bool rolled = false;
+    internal int leftRollCount;
+
+    internal int playerShield, enemyShield;
+
+    public static int rollCount = 3;
     #endregion
 
 
@@ -59,10 +69,35 @@ public class BattleSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 玩家回合，结算一个技能的所有效果
+    /// 事件结算的方法
     /// </summary>
-    /// <param name="combo"></param>
-    public void PlayerExecute(ComboData combo)
+    public void Settlement()
+    {
+
+        List<EventReward> rewards = data.rewards;
+
+        if (rewards != null && rewards.Count > 0)
+        {
+            foreach (var r in rewards)
+            {
+                switch (r.type)
+                {
+                    case EventReward.Type.Gold:
+
+                        GameController.Instance.GainGold(r.value);
+                        break;
+
+                    case EventReward.Type.SkillPoint:
+                        GameController.Instance.GainSkillPoint(r.value);
+                        break;
+                }
+            }
+        }
+
+
+    }
+
+    private bool CanExecute(ComboData combo)
     {
         //判断是否能执行所有效果
         foreach (ComboEffect effect in combo.effects)
@@ -74,7 +109,7 @@ public class BattleSystem : MonoBehaviour
             {
                 if ((effect.toEnemy && enemyTeamView.selectedCharacter == null) || (!effect.toEnemy && playerTeamView.selectedCharacter == null))
                 {
-                    return;
+                    return false;
                 }
 
             }
@@ -82,27 +117,56 @@ public class BattleSystem : MonoBehaviour
 
         }
 
+        return true;
+    }
+
+    /// <summary>
+    /// 玩家回合，结算一个技能的所有效果
+    /// </summary>
+    /// <param name="combo"></param>
+    private void PlayerExecute(ComboData combo)
+    {
+        //判断是否能执行所有效果
+        if (!CanExecute(combo)) return;
+
         //执行所有效果
         foreach (ComboEffect effect in combo.effects)
         {
-            Debug.Log(effect.type);
-
-
+            if (combo.se != null)
+            {
+                AudioManager.Instance.PlaySoundEffect(combo.se);
+            }
             switch (effect.type)
             {
                 case ComboEffect.EffectType.Damage:
 
                     if (effect.toEnemy)
                     {
+                        int value = effect.value;
+                        if (enemyShield > 0)
+                        {
+                            if (value > enemyShield)
+                            {
+                                
+                                value -= enemyShield;
+                                enemyShield = 0;
+                            }
+                            else
+                            {
+                                enemyShield -= value;
+                                continue;
+                            }
+                        }
+
                         if (!effect.isAreaEffect)
                         {
-                            enemyTeamView.selectedCharacter.Damage(effect.value);
+                            enemyTeamView.selectedCharacter.Damage(value);
                         }
                         else
                         {
                             foreach(CharacterData cd in enemyTeam.characters)
                             {
-                                cd.Damage(effect.value);
+                                cd.Damage(value);
                             }
                         }
                     }
@@ -125,7 +189,7 @@ public class BattleSystem : MonoBehaviour
 
                 case ComboEffect.EffectType.Shield:
 
-
+                    playerShield += effect.value;
 
                     break;
 
@@ -138,13 +202,47 @@ public class BattleSystem : MonoBehaviour
         }
 
 
+
+        //管理角色死亡
+        foreach(CharacterData cd in playerTeam.characters)
+        {
+            if (!cd.IsAlive())
+            {
+                deadPlayers.Add(cd);
+            }
+        }
+
+        foreach(CharacterData cd in deadPlayers)
+        {
+            playerTeam.characters.Remove(cd);
+        }
+
+        for(int i = 0; i < enemyTeam.characters.Count; i++)
+        {
+            if (!enemyTeam.characters[i].IsAlive())
+            {
+                enemyTeam.characters.RemoveAt(i);
+                i--;
+            }
+        }
+
         //刷新显示
         playerTeamView.Refresh();
         enemyTeamView.Refresh();
+        ShowShield();
 
+        
+    }
+
+    private void CheckWin()
+    {
         //检测胜负
         if (enemyTeamView.IsOver())
         {
+            //获胜时,死亡角色1hp复活
+            foreach (CharacterData cd in deadPlayers) cd.ChangeHP(1);
+            playerTeam.characters.AddRange(deadPlayers);
+
             GameBattleScene.Instance.WinBattle();
         }
 
@@ -152,6 +250,129 @@ public class BattleSystem : MonoBehaviour
         {
             GameController.Instance.GameLose();
         }
+    }
+
+    private void EnemyExecute(ComboData combo)
+    {
+        //执行所有效果
+        if (combo!= null && combo.effects!= null && combo.effects.Count > 0)
+        {
+            if(combo.se!= null)
+            {
+                AudioManager.Instance.PlaySoundEffect(combo.se);
+            }
+
+            foreach (ComboEffect effect in combo.effects)
+            {
+
+                switch (effect.type)
+                {
+                    case ComboEffect.EffectType.Damage:
+
+                        if (effect.toEnemy)
+                        {
+                            int value = effect.value;
+                            if (playerShield > 0)
+                            {
+                                if(value > playerShield)
+                                {
+                                    value -= playerShield;
+                                    playerShield = 0;
+                                    
+                                }
+                                else
+                                {
+                                    playerShield -= value;
+                                    continue;
+                                }
+                            }
+
+                            //随机选择玩家角色
+                            if (!effect.isAreaEffect)
+                            {
+                                CharacterData cd = playerTeam.characters[Random.Range(0, playerTeam.characters.Count)];
+
+                                cd.Damage(value);
+                            }
+                            else
+                            {
+                                foreach (CharacterData cd in playerTeam.characters)
+                                {
+                                    cd.Damage(value);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            /*
+                            if (!effect.isAreaEffect)
+                            {
+                                playerTeamView.selectedCharacter.Damage(effect.value);
+                            }
+                            else
+                            {
+                                foreach (CharacterData cd in enemyTeam.characters)
+                                {
+                                    cd.Damage(effect.value);
+                                }
+                            }*/
+                        }
+
+                        break;
+
+                    case ComboEffect.EffectType.Shield:
+
+                        enemyShield += effect.value;
+
+                        break;
+
+                    case ComboEffect.EffectType.Heal:
+
+
+
+                        break;
+                }
+            }
+        }
+
+        //管理角色死亡
+        foreach (CharacterData cd in playerTeam.characters)
+        {
+            if (!cd.IsAlive())
+            {
+                deadPlayers.Add(cd);
+            }
+        }
+
+        foreach (CharacterData cd in deadPlayers)
+        {
+            playerTeam.characters.Remove(cd);
+        }
+
+        for (int i = 0; i < enemyTeam.characters.Count; i++)
+        {
+            if (!enemyTeam.characters[i].IsAlive())
+            {
+                enemyTeam.characters.RemoveAt(i);
+                i--;
+            }
+        }
+
+        //刷新显示
+        playerTeamView.Refresh();
+        enemyTeamView.Refresh();
+        ShowShield();
+    }
+
+    public string GetRewardsInfo()
+    {
+        string info = "";
+        for (int i = 0; i < data.rewards.Count; i++)
+        {
+            info += data.rewards[i].ToString();
+        }
+
+        return info;
     }
 
     /// <summary>
@@ -170,7 +391,34 @@ public class BattleSystem : MonoBehaviour
 
         rollButton.onClick.AddListener(delegate {
 
-            rollView.RollAllDices();
+            if(leftRollCount > 0)
+            {
+                leftRollCount--;
+
+                if (!rolled)
+                {
+                    rollView.CreateDiceObjects(playerTeam.characters);
+
+                    foreach (DiceObject obj in rollView.GetDiceObjects())
+                    {
+                        obj.GetButton().onClick.AddListener(delegate {
+
+                            ClickDice(obj);
+
+                        });
+                    }
+                }
+
+                rolled = true;
+                rollButton.GetComponentInChildren<Text>().text = "Roll(" + leftRollCount + ")";
+
+                if (leftRollCount <= 0) rollButton.interactable = false;
+
+                
+                rollView.RollAllDices();
+            }
+
+            
 
         });
 
@@ -181,11 +429,15 @@ public class BattleSystem : MonoBehaviour
         });
 
         comboView.ShowInfo(false);
+
+        deadPlayers = new List<CharacterData>();
     }
 
    
-    public void StartBattle()
+    public void StartBattle(BattleData bd)
     {
+        data = bd;
+
         StartPlayerTurn();
     }
 
@@ -212,6 +464,8 @@ public class BattleSystem : MonoBehaviour
     /// <param name="obj"></param>
     public void ClickDice(DiceObject obj)
     {
+        if (!rolled) return;
+
         if (rollView.ContainsDiceObject(obj))
         {
             rollView.RemoveDiceObject(obj);
@@ -236,6 +490,7 @@ public class BattleSystem : MonoBehaviour
         {
             comboView.ShowInfo(false);
         }
+        //显示combo信息以及确定按钮
         else
         {
             comboView.GetButton().onClick.RemoveAllListeners();
@@ -243,8 +498,24 @@ public class BattleSystem : MonoBehaviour
 
                 //Debug.Log("click combo button");
 
-                PlayerExecute(cd);
+                if (CanExecute(cd))
+                {
+                    PlayerExecute(cd);
 
+                    //清空comboView里的骰子对象
+                    comboView.ClearDiceObjects();
+
+                    //取消显示
+                    comboView.ShowCombo(null);
+
+                    //检测胜利
+                    CheckWin();
+
+                }
+                else
+                {
+
+                }
             });
         }
     }
@@ -254,11 +525,16 @@ public class BattleSystem : MonoBehaviour
     /// </summary>
     private void StartPlayerTurn()
     {
-        Debug.Log("Start Player Turn");
+        endTurnButton.interactable = true;
+
+        playerShield = 0;
+        ShowShield();
+
+        //Debug.Log("Start Player Turn");
         playerTurn = true;
         //rollView.ClearDiceObjects();
 
-
+        /*
         rollView.CreateDiceObjects(playerTeam.characters);
 
         foreach(DiceObject obj in rollView.GetDiceObjects())
@@ -268,9 +544,16 @@ public class BattleSystem : MonoBehaviour
                 ClickDice(obj);
 
             });
-        }
+        }*/
+
+        rolled = false;
+
+        leftRollCount = rollCount;
+
+        rollButton.GetComponentInChildren<Text>().text = "Roll(" + leftRollCount + ")";
 
         rollButton.interactable = true;
+
         turnText.text = "玩家回合";
     }
 
@@ -279,6 +562,11 @@ public class BattleSystem : MonoBehaviour
     /// </summary>
     private void StartEnemyTurn()
     {
+        endTurnButton.interactable = false;
+
+        enemyShield = 0;
+        ShowShield();
+
         playerTurn = false;
         //rollView.ClearDiceObjects();
         rollView .CreateDiceObjects(enemyTeam.characters);
@@ -287,10 +575,74 @@ public class BattleSystem : MonoBehaviour
         rollButton.interactable = false;
         turnText.text = "敌方回合";
 
+        StartCoroutine(EnemyAction());
+
+    }
+
+    private IEnumerator EnemyAction()
+    {
+
+        //投一次骰子
+
+        rollView.RollAllDices();
+        List<DiceObject> list = rollView.GetDiceObjects();
+        yield return new WaitForSeconds(1f);
+
+        //依次使用技能，并判定胜负
+
+        while (list.Count > 0)
+        {
+            DiceObject obj = list[0];
+
+            list.RemoveAt(0);
+
+            
+            rollView.RemoveDiceObject(obj);
+
+            if (obj.currentFace.index == 0)
+            {
+                Destroy(obj.gameObject);
+
+                continue;
+            }
+
+
+            comboView.AddDiceObject(obj);
+
+
+
+            ComboData cd = comboView.FindComboAndShow();
+            
+
+            //执行技能效果
+            EnemyExecute(cd);
+
+            //清空comboView里的骰子对象
+            comboView.ClearDiceObjects();
+
+            //取消combo显示
+            comboView.ShowCombo(null);
+
+            //检测胜利
+            CheckWin();
+
+
+            yield return new WaitForSeconds(1f);
+
+        }
+
+        EndTurn();
+        //结束回合
+
+        yield return null;
     }
 
     
-
+    private void ShowShield()
+    {
+        enemyTeamView.ShowShield(enemyShield);
+        playerTeamView.ShowShield(playerShield);
+    }
 
 
 }

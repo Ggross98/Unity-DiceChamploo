@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ using UnityEngine;
 /// 当前和最大生命；
 /// 各个等级下的以上数据
 /// </summary>
-public class CharacterData
+public class CharacterData: IModel<CharacterData>
 {
     //角色模板编号。或许可以用一个Dictionary来管理模板
     public int index;
@@ -37,13 +38,7 @@ public class CharacterData
     public enum Faction { Player, Enemy};
     public Faction faction = Faction.Player;
 
-    public CharacterData Model()
-    {
-        return MemberwiseClone() as CharacterData;
 
-        //return Utils.DeepCopyByReflect(this);
-        //深度拷贝代码有问题，先凑合着用
-    }
 
     public void ChangeHP(int delta)
     {
@@ -135,30 +130,55 @@ public class CharacterData
         return level * 5;
     }
 
+    public CharacterData Model()
+    {
+        CharacterData cd = new CharacterData();
+
+        cd.index = index;
+        cd.name = name;
+        cd.gender = gender;
+        cd.level = level;
+        cd.maxLevel = maxLevel;
+        cd.hp = hp;
+        cd.maxHp = maxHp;
+        cd.maxHpBank = maxHpBank;
+        cd.portrait = portrait;
+        cd.dices = dices;
+        cd.dicesBank = dicesBank;
+        cd.faction = faction;
+        
+        return cd;
+    }
+
 
     //*********************************数据库
 
-    public static CharacterData MainCharacter_1 = new CharacterData(
+    private static CharacterData MainCharacter_1 = new CharacterData(
     1,
-    "主角团1",
+    "维托",
     true,
     3,
-    new int[] { 5, 10, 15 },
+    new int[] { 20, 25, 30 },
     Resources.Load<Sprite>("Characters/MainCharacters/1"),
     new List<DiceData>[]
     {
             new List<DiceData>(){
-                DiceData.GetDiceDataModel("Red_A1")
+                DiceData.GetDiceDataModel("Red_A2"),
+                DiceData.GetDiceDataModel("Red_A2"),
 
             },
             new List<DiceData>(){
-                DiceData.GetDiceDataModel("Red_A2")
+                DiceData.GetDiceDataModel("Red_A2"),
+                DiceData.GetDiceDataModel("Red_A2"),
+                DiceData.GetDiceDataModel("Green_A1")
 
 
             },
             new List<DiceData>(){
                 DiceData.GetDiceDataModel("Red_A2"),
-                DiceData.GetDiceDataModel("Red_A1")
+                DiceData.GetDiceDataModel("Red_A2"),
+                DiceData.GetDiceDataModel("Red_A1"),
+                DiceData.GetDiceDataModel("Green_A2")
 
 
             }
@@ -167,27 +187,36 @@ public class CharacterData
 
     );
 
-    public static CharacterData MainCharacter_2 = new CharacterData(
+    private static CharacterData MainCharacter_2 = new CharacterData(
         2,
-        "主角团2",
+        "加文",
         true,
         3,
-        new int[] {5,10,15},
+        new int[] {10,15,20},
         Resources.Load<Sprite>("Characters/MainCharacters/2"),
         new List<DiceData>[]
     {
             new List<DiceData>(){
-                DiceData.GetDiceDataModel("Blue_A1")
+                DiceData.GetDiceDataModel("Blue_A2"),
 
-            },
-            new List<DiceData>(){
                 DiceData.GetDiceDataModel("Blue_A2")
 
 
             },
             new List<DiceData>(){
                 DiceData.GetDiceDataModel("Blue_A2"),
-                DiceData.GetDiceDataModel("Red_A1")
+                DiceData.GetDiceDataModel("Blue_A2"),
+
+                DiceData.GetDiceDataModel("Blue_A2")
+
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Blue_A2"),
+                DiceData.GetDiceDataModel("Blue_A2"),
+                DiceData.GetDiceDataModel("Blue_A2"),
+    
+                DiceData.GetDiceDataModel("Blue_A1")
 
 
             }
@@ -196,9 +225,9 @@ public class CharacterData
     
     );
 
-    public static CharacterData MainCharacter_3 = new CharacterData(
+    private static CharacterData MainCharacter_3 = new CharacterData(
         3,
-        "主角团3",
+        "Chip",
         false,
         3,
         new int[] { 10, 15, 20 },
@@ -206,17 +235,24 @@ public class CharacterData
         new List<DiceData>[]
         {
             new List<DiceData>(){
-                DiceData.GetDiceDataModel("Green_A1")
-
+                DiceData.GetDiceDataModel("Green_A2"),
+                DiceData.GetDiceDataModel("Green_A2"),
+                
             },
             new List<DiceData>(){
+                DiceData.GetDiceDataModel("Green_A2"),
+                DiceData.GetDiceDataModel("Green_A2"),
+
                 DiceData.GetDiceDataModel("Green_A2")
 
 
             },
             new List<DiceData>(){
                 DiceData.GetDiceDataModel("Green_A2"),
-                DiceData.GetDiceDataModel("Red_A1")
+                DiceData.GetDiceDataModel("Green_A2"),
+                DiceData.GetDiceDataModel("Green_A2"),
+
+                DiceData.GetDiceDataModel("Green_A1")
 
 
             }
@@ -224,5 +260,157 @@ public class CharacterData
 
 
         );
+
+    private static CharacterData MainCharacter_4 = new CharacterData(
+        4,
+        "玛雅",
+        false,
+        3,
+        new int[] { 10, 15, 20 },
+        Resources.Load<Sprite>("Characters/MainCharacters/4"),
+        new List<DiceData>[]
+        {
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Green_A1")
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Green_A1"),
+                DiceData.GetDiceDataModel("Blue_A1"),
+
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Green_A1"),
+                DiceData.GetDiceDataModel("Blue_A1"),
+                DiceData.GetDiceDataModel("Red_A1"),
+
+
+            }
+        }
+
+
+        );
+
+    private static CharacterData Enemy_1 = new CharacterData(
+        101,
+        "小混混",
+        true,
+        3,
+        new int[] { 5, 10, 20 },
+        Resources.Load<Sprite>("Characters/Enemies/1"),
+        new List<DiceData>[]
+        {
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Punch1")
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Punch1")
+
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Punch1"),
+                DiceData.GetDiceDataModel("Enemy_Punch1")
+
+
+            }
+        }
+
+
+        );
+
+    private static CharacterData Enemy_2 = new CharacterData(
+        102,
+        "小混混",
+        false,
+        3,
+        new int[] { 5, 10, 20 },
+        Resources.Load<Sprite>("Characters/Enemies/2"),
+        new List<DiceData>[]
+        {
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Pistol1")
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Pistol2")
+
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Pistol2"),
+                DiceData.GetDiceDataModel("Enemy_Pistol1")
+
+
+            }
+        }
+
+
+        );
+
+
+    private static CharacterData Enemy_3 = new CharacterData(
+            103,
+            "教徒",
+            false,
+            3,
+            new int[] { 25, 30, 30 },
+            Resources.Load<Sprite>("Characters/Enemies/3"),
+            new List<DiceData>[]
+            {
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Pistol2"),
+                DiceData.GetDiceDataModel("Enemy_Pistol2"),
+                DiceData.GetDiceDataModel("Enemy_Punch1"),
+
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Pistol2")
+
+
+            },
+            new List<DiceData>(){
+                DiceData.GetDiceDataModel("Enemy_Pistol2"),
+                DiceData.GetDiceDataModel("Enemy_Pistol1")
+
+
+            }
+            }
+
+
+    );
+
+    private static Dictionary<int, CharacterData> characterDictionary = new Dictionary<int, CharacterData>() {
+
+        { 1, MainCharacter_1 },
+        { 2, MainCharacter_2 },
+        { 3, MainCharacter_3 },
+
+        { 4, MainCharacter_4 },
+
+        { 101, Enemy_1},
+
+        { 102, Enemy_2 },
+
+        { 103, Enemy_3}
+
+
+
+    };
+
+    public static CharacterData GetCharacterData(int index)
+    {
+        if (characterDictionary.ContainsKey(index))
+        {
+            return characterDictionary[index].Model();
+        }
+        else
+        {
+            return MainCharacter_1.Model();
+        }
+    }
 
 }

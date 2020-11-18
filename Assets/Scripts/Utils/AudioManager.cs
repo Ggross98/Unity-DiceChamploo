@@ -16,7 +16,9 @@ public class AudioManager: SingletonTemplate<AudioManager>
     private AudioSource bgAudioSource;
     private AudioSource seAudioSource;
 
+    private static float fadeTime = 1f;
 
+    private static float bgMaxVolume = 1f;
 
 
     private void Awake()
@@ -102,11 +104,29 @@ public class AudioManager: SingletonTemplate<AudioManager>
         if (_soundDictionary.ContainsKey(audioName))
 
         {
-            bgAudioSource.clip = _soundDictionary[audioName];
-
-            bgAudioSource.Play();
+            StartCoroutine(FadeIn(audioName));
 
         }
+    }
+
+    private IEnumerator FadeIn(string audioName)
+    {
+        
+        float delta = bgMaxVolume / fadeTime;
+        while(bgAudioSource.volume > 0)
+        {
+            bgAudioSource.volume -= delta * Time.deltaTime;
+            yield return null;
+        }
+        bgAudioSource.clip = _soundDictionary[audioName];
+        bgAudioSource.Play();
+        while (bgAudioSource.volume < bgMaxVolume)
+        {
+            bgAudioSource.volume += delta * Time.deltaTime;
+            yield return null;
+        }
+
+        yield return null;
     }
 
 

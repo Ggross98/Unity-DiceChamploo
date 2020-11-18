@@ -97,6 +97,9 @@ public class GameMapScene : SceneStateBase<GameMapScene>
     [SerializeField]
     Button upgradeButton, dismissButton;
 
+    [SerializeField]
+    Text skillPointTotal, skillPointUpgrade;
+
 
     //****************************地图面板
 
@@ -104,6 +107,8 @@ public class GameMapScene : SceneStateBase<GameMapScene>
 
     [SerializeField]
     Transform mapViewField;
+
+    float fieldWidth, fieldHeight;
 
     List<MapEventView> mapViewList = new List<MapEventView>();
 
@@ -130,18 +135,36 @@ public class GameMapScene : SceneStateBase<GameMapScene>
 
     }
 
-
-    public void StartEvent(/**/)
+    /*
+    internal void StartEvent(EventDataBase data)
     {
+        GameController.Instance.gameData.progress.nextEventData = data;
+
         GameController.Instance.LoadScene("GameEvent");
         AudioManager.Instance.PlaySoundEffect("SE_Beep1");
     }
 
-    public void StartBattle(/**/)
+    internal void StartEvent(Stage s)
     {
+        GameController.Instance.gameData.progress.playerPos = s.pos;
+
+        StartEvent(s.data);
+    }
+
+    public void StartBattle(EventDataBase data)
+    {
+        GameController.Instance.gameData.progress.nextEventData = data;
+
         GameController.Instance.LoadScene("GameBattle");
         AudioManager.Instance.PlaySoundEffect("SE_Beep1");
     }
+
+    internal void StartBattle(Stage s)
+    {
+        GameController.Instance.gameData.progress.playerPos = s.pos;
+
+        StartBattle(s.data);
+    }*/
 
 
     /// <summary>
@@ -184,46 +207,55 @@ public class GameMapScene : SceneStateBase<GameMapScene>
 
         //生成地图面板
         mapPanel.SetActive(true);
-        for(int i = 0; i < 1; i++)
+
+        Stage[,] stages = GameController.Instance.gameData.progress.stages;
+
+        fieldWidth = mapViewField.GetComponent<RectTransform>().sizeDelta.x;
+        fieldHeight = mapViewField.GetComponent<RectTransform>().sizeDelta.y;
+
+        int maxX = GameController.Instance.gameData.progress.width;
+        int maxY = GameController.Instance.gameData.progress.height;
+
+        float width = fieldWidth / maxX;
+        float height = fieldHeight / maxY;
+
+        //根据关卡生成地图
+        for(int i = 0; i < maxX; i++)
         {
-            GameObject obj = Instantiate(mapViewPrefab, mapViewField);
-            obj.name = "关卡" + (i+1);
-
-            obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(-200,0);
-
-            MapEventView view = obj.GetComponent<MapEventView>();
-
-            mapViewList.Add(view);
-
-            view.SetDescription("事件说明。单击进入事件");
-
-            view.GetButton().onClick.AddListener(delegate 
+            for(int j = 0; j < maxY; j++)
             {
-                StartEvent();
+                Stage stage = stages[i, j];
 
-            });
+                if (stage != null)
+                {
+                    
+                    GameObject obj = Instantiate(mapViewPrefab, mapViewField);
+                    obj.name = stage.pos+"";
+
+                    obj.transform.localPosition = new Vector2(i*width - fieldWidth/2 + width/2 , j*height - fieldHeight/2 + height/2);
+
+                    MapEventView view = obj.GetComponent<MapEventView>();
+
+                    mapViewList.Add(view);
+
+                    view.SetDescription("事件说明。单击进入事件");
+
+                    view.GetButton().onClick.AddListener(delegate
+                    {
+                        GameController.Instance.StartStage(stage);
+
+                    });
+
+
+                    //根据关卡状态修改图标
+                    int[] status = GameController.Instance.gameData.progress.GetStageStatus(stage);
+                    view.SetStatus(status[0],status[1]);
+
+
+                }
+            }
         }
-
-        for(int i = 1; i < 2; i++)
-        {
-            GameObject obj = Instantiate(mapViewPrefab, mapViewField);
-            obj.name = "关卡" + (i + 1);
-
-            obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(200,0);
-
-            MapEventView view = obj.GetComponent<MapEventView>();
-
-            mapViewList.Add(view);
-
-            view.SetDescription("战斗说明。单击进入战斗");
-
-            view.GetButton().onClick.AddListener(delegate
-            {
-                StartBattle();
-
-            });
-        }
-
+        
         //加载队伍数据
         team = GameController.Instance.gameData.playerTeamData;
         characters = team.characters;
@@ -268,6 +300,10 @@ public class GameMapScene : SceneStateBase<GameMapScene>
     {
 
         //刷新队伍预览
+        skillPointTotal.text = "技能点数：" + GameController.Instance.gameData.skillPoint;
+
+        if (selectedCharacter != null)
+            skillPointUpgrade.text = "技能点：" + selectedCharacter.UpgradeCost();
 
         teamCountText.text = team.Count() + "/5";
 
@@ -289,6 +325,11 @@ public class GameMapScene : SceneStateBase<GameMapScene>
                 view.GetButton().onClick.AddListener(delegate
                 {
                     selectedCharacter = cd;
+
+                    skillPointTotal.text = "技能点数：" + GameController.Instance.gameData.skillPoint;
+
+                    if (selectedCharacter != null)
+                        skillPointUpgrade.text = "技能点：" + selectedCharacter.UpgradeCost();
 
                     characterInfo.ShowCharacter(selectedCharacter);
 

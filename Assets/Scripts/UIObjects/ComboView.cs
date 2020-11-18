@@ -100,10 +100,12 @@ public class ComboView : MonoBehaviour
         {
             DiceObject obj = diceObjects[i];
 
-            diceObjects.Remove(obj);
+            //diceObjects.Remove(obj);
 
             Destroy(obj.gameObject);
         }
+
+        diceObjects.Clear();
 
 
     }

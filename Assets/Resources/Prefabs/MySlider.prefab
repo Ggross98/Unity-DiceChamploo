@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2057031816760502236}
   - component: {fileID: 8053974537631948294}
   - component: {fileID: 7870990320320550082}
+  - component: {fileID: 8621405792818362112}
   m_Layer: 5
   m_Name: MySlider
   m_TagString: Untagged
@@ -75,6 +76,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8621405792818362112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2243700689327546589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d5ad544b6cf1e24fb66e9c06927100d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 5783044105514787812}
 --- !u!1 &4397422955174184617
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,9 @@ public class CharacterEventView : MonoBehaviour
     Image portrait, aura;
 
     [SerializeField]
+    MySlider slider;
+
+    [SerializeField]
     Button button;
 
     private void SetImage(Sprite s)
@@ -23,6 +26,12 @@ public class CharacterEventView : MonoBehaviour
     public Button GetButton()
     {
         return button;
+    }
+
+    public void ShowHP(int hp, int maxHp) {
+
+        slider.SetValue(hp, maxHp);
+
     }
 
     public void ShowAura(bool b)
@@ -41,6 +50,7 @@ public class CharacterEventView : MonoBehaviour
     public void ShowCharacter(CharacterData data)
     {
         SetImage(data.portrait);
+        slider.SetValue(data.hp, data.maxHp);
     }
 
     public void SetSize(float height)

@@ -48,7 +48,7 @@ public class DiceFaceData
         { "Attack",
            new DiceFaceData(
                 10,
-                Type.None,
+                Type.Red,
                 Resources.Load<Sprite>("Dices/Dice_Attack")
             )
         },
@@ -56,7 +56,7 @@ public class DiceFaceData
         { "Move",
            new DiceFaceData(
                 11,
-                Type.None,
+                Type.Red,
                 Resources.Load<Sprite>("Dices/Dice_Move")
             )
         },
@@ -64,7 +64,7 @@ public class DiceFaceData
         { "Observation",
             new DiceFaceData(
                 20,
-                Type.None,
+                Type.Blue,
                 Resources.Load<Sprite>("Dices/Dice_Observation")
             )
         },
@@ -72,7 +72,7 @@ public class DiceFaceData
         { "Think",
             new DiceFaceData(
                 21,
-                Type.None,
+                Type.Blue,
                 Resources.Load<Sprite>("Dices/Dice_Think")
             )
         },
@@ -80,7 +80,7 @@ public class DiceFaceData
         { "Defense",
             new DiceFaceData(
                 30,
-                Type.None,
+                Type.Green,
                 Resources.Load<Sprite>("Dices/Dice_Defense")
             )
         },
@@ -88,7 +88,7 @@ public class DiceFaceData
         { "Handle",
             new DiceFaceData(
                 31,
-                Type.None,
+                Type.Green,
                 Resources.Load<Sprite>("Dices/Dice_Handle")
             )
         },
@@ -98,7 +98,7 @@ public class DiceFaceData
             new DiceFaceData(
                 100,
                 Type.None,
-                Resources.Load<Sprite>("Dices/Dice_Blank")
+                Resources.Load<Sprite>("Dices/Dice_Pistol")
             )
 
         },
@@ -108,10 +108,31 @@ public class DiceFaceData
             new DiceFaceData(
                 101,
                 Type.None,
-                Resources.Load<Sprite>("Dices/Dice_Blank")
+                Resources.Load<Sprite>("Dices/Dice_Rifle")
             )
 
         },
+
+        { "Tesla",
+
+            new DiceFaceData(
+                102,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Tesla")
+            )
+
+        },
+
+        { "Punch",
+
+            new DiceFaceData(
+                103,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Punch")
+            )
+
+        },
+
 
 
 

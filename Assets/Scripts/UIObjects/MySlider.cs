@@ -6,13 +6,15 @@ using UnityEngine.UI;
 
 public class MySlider : MonoBehaviour
 {
+    [SerializeField]
     Slider slider;
 
-    Image frame, fill;
+    [SerializeField]
+    //Image frame, fill;
     
     public void SetRange(int min, int max)
     {
-        if(min<max)
+        if(min>max)
         {
             Debug.LogError("slider range error!");
             return;
@@ -32,6 +34,12 @@ public class MySlider : MonoBehaviour
         if (value < slider.minValue) value = (int)slider.minValue;
 
         slider.value = value;
+    }
+
+    public void SetValue(int value, int max)
+    {
+        SetRange(0, max);
+        SetValue(value);
     }
 
     public int GetValue()

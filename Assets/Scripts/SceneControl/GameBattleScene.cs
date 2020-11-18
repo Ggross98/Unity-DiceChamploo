@@ -9,18 +9,26 @@ public class GameBattleScene : SceneStateBase<GameBattleScene>
     #region 与中介类交互
 
     [SerializeField]
-    BattleSystem battle;
+    BattleSystem battleSystem;
 
     public void EnemyAction() { }
 
-    public void StartBattle() {
-
-
-    }
-
     public void WinBattle()
     {
-        Debug.Log("Battle Won!");
+        wonRewards.text = battleSystem.GetRewardsInfo();
+
+        wonPanel.SetActive(true);
+
+
+
+        //Debug.Log("Battle Won!");
+    }
+
+    public void BattleSettlement()
+    {
+        battleSystem.Settlement();
+
+        GameController.Instance.FinishStage();
     }
 
     //5、结束事件时调用的内容
@@ -55,12 +63,21 @@ public class GameBattleScene : SceneStateBase<GameBattleScene>
 
     //****************************状态栏
 
+
+
     [SerializeField]
     StatusBar status;
 
+    //****************************战斗胜利
+    [SerializeField]
+    GameObject wonPanel;
+
+    [SerializeField]
+    Text wonRewards;
+
     #endregion
 
-
+    
     public void BackToMenu()
     {
         GameController.Instance.LoadScene("MainMenu");
@@ -86,10 +103,11 @@ public class GameBattleScene : SceneStateBase<GameBattleScene>
         /*team = GameController.Instance.gameData.playerTeamData;
         playerCharacters = team.characters;*/
 
-
+        BattleData battleData = (BattleData)GameController.Instance.gameData.progress.nextEventData;
 
         //TODO: 从事件中读取敌人数据 
 
+        /*
         TeamData enemyTeam = new TeamData();
 
         List<CharacterData> enemyCharacters = new List<CharacterData>() {
@@ -98,16 +116,16 @@ public class GameBattleScene : SceneStateBase<GameBattleScene>
 
         };
 
-        enemyTeam.characters = enemyCharacters;
+        enemyTeam.characters = enemyCharacters;*/
 
-
+        
         //生成玩家角色UI
         playerTeamView.CreateCharacterObjects(GameController.Instance.gameData.playerTeamData);
         playerTeamView.HideCharacterInfo();
 
 
         //生成敌人角色UI
-        enemyTeamView.CreateCharacterObjects(enemyTeam);
+        enemyTeamView.CreateCharacterObjects(battleData.enemyTeam.Model());
         enemyTeamView.SetEnemy(true);
         enemyTeamView.HideCharacterInfo();
 
@@ -124,8 +142,9 @@ public class GameBattleScene : SceneStateBase<GameBattleScene>
 
 
         //启动战斗系统
-        battle.Init(playerTeamView, enemyTeamView);
-        battle.StartBattle();
+
+        battleSystem.Init(playerTeamView, enemyTeamView);
+        battleSystem.StartBattle(battleData);
 
     }
 

@@ -154,6 +154,60 @@ public class DiceData
 
         },
 
+        {
+            "Enemy_Punch1",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Punch"),
+                    DiceFaceData.GetDiceFaceModel("Punch"),
+                    DiceFaceData.GetDiceFaceModel("Punch"),
+                    DiceFaceData.GetDiceFaceModel("Punch"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Enemy_Pistol1",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Pistol"),
+                    DiceFaceData.GetDiceFaceModel("Pistol"),
+
+
+                }
+
+
+            )
+
+        },
+
+        {
+            "Enemy_Pistol2",
+            new DiceData(
+
+                new DiceFaceData[]
+                {
+                    DiceFaceData.GetDiceFaceModel("Pistol"),
+                    DiceFaceData.GetDiceFaceModel("Pistol"),
+                    DiceFaceData.GetDiceFaceModel("Pistol"),
+                    DiceFaceData.GetDiceFaceModel("Pistol"),
+
+                }
+
+
+            )
+
+        },
+
     };
     
 

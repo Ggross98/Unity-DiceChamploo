@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 
 public class Utils
@@ -27,46 +28,31 @@ public class Utils
         return str;
     }
 
-    /// <summary>
-    /// 使用xml序列号进行深度拷贝
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-    public static T DeepCopyByXml<T>(T obj)
+
+    public static Object DeepClone(Object obj) //深clone
     {
-        object retval;
-        using (MemoryStream ms = new MemoryStream())
-        {
-            XmlSerializer xml = new XmlSerializer(typeof(T));
-            xml.Serialize(ms, obj);
-            ms.Seek(0, SeekOrigin.Begin);
-            retval = xml.Deserialize(ms);
-            ms.Close();
-        }
-        return (T)retval;
+        MemoryStream stream = new MemoryStream();
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(stream, obj);
+        stream.Position = 0;
+        return formatter.Deserialize(stream) as Object;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-    public static T DeepCopyByReflect<T>(T obj)
-    {
-        //如果是字符串或值类型则直接返回
-        if (obj is string || obj.GetType().IsValueType) return obj;
-
-        object retval = Activator.CreateInstance(obj.GetType());
-        FieldInfo[] fields = obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-        foreach (FieldInfo field in fields)
-        {
-            try { field.SetValue(retval, DeepCopyByReflect(field.GetValue(obj))); }
-            catch { }
-        }
-        return (T)retval;
-    }
+     public static T DeepCopy<T>(T obj)
+      {
+          object retval;
+          using (MemoryStream ms = new MemoryStream())
+          {
+             BinaryFormatter bf = new BinaryFormatter();
+              //序列化成流
+              bf.Serialize(ms, obj);
+              ms.Seek(0, SeekOrigin.Begin);
+             //反序列化成对象
+             retval = bf.Deserialize(ms);
+             ms.Close();
+         }
+         return (T) retval;
+     }
 
 
     public static void SortDiceFaceDataList(List<DiceFaceData> list, bool ascending)
@@ -97,6 +83,11 @@ public class Utils
                 str += "造成" + effect.value + "伤害。";
                 if (effect.isAreaEffect) str += "群体攻击。";
 
+                break;
+
+            case ComboEffect.EffectType.Shield:
+
+                str += "获得" + effect.value + "护盾。";
                 break;
         }
 

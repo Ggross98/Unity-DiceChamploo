@@ -23,9 +23,9 @@ public class StatusBar : MonoBehaviour
 
     }
 
-    private void SetLevel(string s)
+    private void SetLevel(int level, int maxLevel)
     {
-        levelText.text = "level "+s;
+        levelText.text = "level "+level+"/"+maxLevel;
     }
 
     private void Update()
@@ -34,8 +34,7 @@ public class StatusBar : MonoBehaviour
 
         SetGold(gd.gold);
         SetTime(gd.time);
-        //TODO: 显示关卡
-        SetLevel("1-1");
+        SetLevel(gd.progress.level, gd.progress.totalLevels);
     }
 
 

@@ -16,9 +16,18 @@ public class GameData
 
     public int skillPoint = 99;
 
+    public GameProgress progress;
 
     public TeamData playerTeamData;
 
-
+    public GameData()
+    {
+        difficulty = 1;
+        gold = 0;
+        time = 0;
+        skillPoint = 0;
+        progress = new GameProgress();
+        playerTeamData = new TeamData();
+    }
 
 }

@@ -41,9 +41,10 @@ public class GameEventScene : SceneStateBase<GameEventScene>
     Transform optionField; //显示选项按钮的区域
 
     private GameObject optionPrefab; //选项预制体，包括文字说明和按钮
-    //List<GameObject> optionObjects;
+    List<OptionView> optionViewList = new List<OptionView>(); //选项对象
 
-
+    [SerializeField]
+    EventSystem eventSystem; //事件系统
 
 
     //****************************骰子显示
@@ -71,65 +72,134 @@ public class GameEventScene : SceneStateBase<GameEventScene>
 
     #endregion
 
+    void ShowMovement()
+    {
+        eventTitle.text = eventSystem.GetEventDiscription();
+
+        eventDescription.text = eventSystem.GetMovementDiscription();
+
+        ShowOptions();
+    }
+
+    void ClearOptions()
+    {
+        foreach(OptionView ov in optionViewList)
+        {
+            Destroy(ov.gameObject);
+        }
+
+        optionViewList.Clear();
+    }
+
+    void ShowOptions()
+    {
+        ClearOptions();
+
+        int count = eventSystem.OptionCount();
+
+        for(int i = 0; i < count; i++)
+        {
+            GameObject obj = Instantiate(optionPrefab, optionField);
+            obj.name = i + "";
+
+            OptionView view1 = obj.GetComponent<OptionView>();
+
+            view1.SetName(eventSystem.GetOptionDiscription()[i]);
+            view1.SetButtonText(eventSystem.GetConditionDiscription()[i]);
+
+            view1.GetButton().onClick.AddListener(delegate {
+
+                int index = int.Parse(view1.gameObject.name);
+
+                if (eventSystem.NeedDices(index))
+                {
+                    List<DiceFaceData> diceFaces = RollAllDices();
+
+                    ExecuteOption(eventSystem.CheckOption(int.Parse(view1.gameObject.name), diceFaces));
+
+                }
+                else
+                {
+                    ExecuteOption(eventSystem.CheckOption(int.Parse(view1.gameObject.name)));
+
+                }
+
+
+
+
+            });
+
+            optionViewList.Add(view1);
+        }
+    }
+
+    void EndEvent()
+    {
+        Debug.Log("End Event");
+        eventSystem.Settlement();
+
+        GameController.Instance.FinishStage();
+    }
+
+    void ExecuteOption(OptionResult or)
+    {
+        switch (or)
+        {
+            case OptionResult.Ending:
+
+                EndEvent();
+                
+                break;
+
+            case OptionResult.SuccessJump:
+
+                eventSystem.SwitchCurrentMovement();
+
+                ShowMovement();
+
+                break;
+
+            case OptionResult.FailJump:
+
+                eventSystem.SwitchCurrentMovement();
+
+                ShowMovement();
+                break;
+
+            case OptionResult.Battle:
+
+
+                eventSystem.Settlement();
+
+                GameController.Instance.StartBattle(eventSystem.GetNextBattle());
+
+                break;
+        }
+    }
+
     protected override void LoadUIObjects()
     {
         //1、从中介类读取数据，包括事件及选项、玩家的队伍数据等
         team = GameController.Instance.gameData.playerTeamData;
         characters = team.characters;
 
+        eventSystem.LoadEventData((EventData)GameController.Instance.gameData.progress.nextEventData);
+
         //2、改变背景图
         //background.sprite = null;
 
         //3、创建角色UI
-
         playerTeamView.CreateCharacterObjects(characters);
         playerTeamView.HideCharacterInfo();
-  
+
 
 
         //4、创建事件信息UI
-        eventTitle.text = "事件标题";
-        eventDescription.text = "事件描述";
-        
-
-        GameObject obj1 = Instantiate(optionPrefab, optionField);
-        OptionView view1 = obj1.GetComponent<OptionView>();
-        view1.SetName("事件结束");
-        view1.SetButtonText("返回地图");
-
-        view1.GetButton().onClick.AddListener(delegate {
-
-            BackToMap();
-        });
-
-        GameObject obj3 = Instantiate(optionPrefab, optionField);
-        OptionView view3 = obj3.GetComponent<OptionView>();
-        view3.SetName("投掷骰子");
-        view3.SetButtonText("投掷骰子");
-
-        view3.GetButton().onClick.AddListener(delegate {
-
-            RollAllDices();
-        });
-
-        GameObject obj2 = Instantiate(optionPrefab, optionField);
-        OptionView view2 = obj2.GetComponent<OptionView>();
-        view2.SetName("游戏结束");
-        view2.SetButtonText("前往结算");
-
-        view2.GetButton().onClick.AddListener(delegate {
-
-            GameOver();
-        });
-
-        //状态栏数据
-        /*status.SetGold(0);
-        status.SetTime(61f);
-        status.SetLevel("1-1");*/
+        ShowMovement();
 
 
         //生成骰子对象
-        
+
         //diceObjectPanel.CreateDiceObjects();
 
         //生成暂停面板

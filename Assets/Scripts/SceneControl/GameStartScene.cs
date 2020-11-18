@@ -34,18 +34,21 @@ public class GameStartScene : SceneStateBase<GameStartScene>
     {
 
         //创建队伍信息，并保存在GameData中
-        GameController.Instance.StartGame();
+        //GameController.Instance.StartGame();
 
-        TeamData playerTeam = new TeamData();
+        GameController.Instance.gameData = new GameData();
+
+
+        //生成队伍
+        TeamData playerTeam = GameController.Instance.gameData.playerTeamData;
         playerTeam.Recruit(mainCharacter);
         playerTeam.Recruit(secondCharacter);
-
-        GameController.Instance.gameData.playerTeamData = playerTeam;
+       
 
         //开始游戏
-
+        GameController.Instance.StartGame();
         
-        GameController.Instance.LoadScene("GameMap");
+        //GameController.Instance.LoadScene("GameMap");
     }
 
     public void ChangeTeammate()
@@ -61,11 +64,11 @@ public class GameStartScene : SceneStateBase<GameStartScene>
     protected override void LoadUIObjects()
     {
         //1、生成两个角色的数据，并显示在信息栏中
-        mainCharacter = CharacterData.MainCharacter_1.Model();
+        mainCharacter = CharacterData.GetCharacterData(1);
 
         teammates = new CharacterData[] {
-            CharacterData.MainCharacter_2.Model(),
-            CharacterData.MainCharacter_3.Model(),
+            CharacterData.GetCharacterData(2),
+            CharacterData.GetCharacterData(3),
         };
 
         teamIndex = 0;

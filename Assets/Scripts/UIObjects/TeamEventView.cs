@@ -34,6 +34,12 @@ public class TeamEventView : MonoBehaviour
     [SerializeField]
     Text teamCountText;
 
+    [SerializeField]
+    GameObject shield;
+
+    [SerializeField]
+    Text shieldText;
+
     public TeamData team;
 
 
@@ -94,6 +100,12 @@ public class TeamEventView : MonoBehaviour
 
             characters.Add(c, view);
 
+            if(i == 0)
+            {
+                selectedCharacter = c;
+                view.ShowAura(true);
+            }
+
         }
 
         
@@ -121,6 +133,7 @@ public class TeamEventView : MonoBehaviour
                 toRemove.Add(cd);
                 
                 CharacterEventView view = characters[cd];
+                characterEventViewList.Remove(view);
 
                 toKill.Add(view.gameObject);
             }
@@ -138,9 +151,24 @@ public class TeamEventView : MonoBehaviour
             Destroy(toKill[i]);
         }
 
+        //刷新所选对象信息显示
+
+        if(selectedCharacter == null && team.characters.Count > 0)
+        {
+            selectedCharacter = team.characters[0];
+        }
+
         if (info.isActiveAndEnabled)
         {
             info.ShowCharacter(selectedCharacter);
+        }
+
+        //显示成员血量
+        foreach (CharacterData cd in characters.Keys)
+        {
+            CharacterEventView view = characters[cd];
+
+            view.ShowHP(cd.hp, cd.maxHp);
         }
     }
 
@@ -150,6 +178,21 @@ public class TeamEventView : MonoBehaviour
         {
             view.ShowAura(false);
         }
+    }
+
+    public void ShowShield(int s)
+    {
+        if (s <= 0)
+        {
+            shield.SetActive(false);
+
+        }
+        else
+        {
+            shieldText.text = s + "";
+            shield.SetActive(true);
+        }
+
     }
 
     

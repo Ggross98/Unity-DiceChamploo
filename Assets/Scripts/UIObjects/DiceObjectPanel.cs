@@ -29,6 +29,8 @@ public class DiceObjectPanel : MonoBehaviour
             CreateDiceObjects();
         }*/
 
+        AudioManager.Instance.PlaySoundEffect("SE_Dice");
+
         List<DiceFaceData> list = new List<DiceFaceData>();
 
         foreach (DiceObject obj in diceObjects)
