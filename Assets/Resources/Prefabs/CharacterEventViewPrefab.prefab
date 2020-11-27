@@ -127,9 +127,9 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -328, y: -184}
   m_SizeDelta: {x: 128, y: 255}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2060729976658155958
@@ -262,8 +262,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.7, y: -108.9}
-  m_SizeDelta: {x: 149.88492, y: 81.76256}
+  m_AnchoredPosition: {x: -5.6, y: -107.1}
+  m_SizeDelta: {x: 217.7464, y: 114.692245}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1257431323608800488
 CanvasRenderer:
@@ -309,6 +309,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2060729976658155944}
     m_Modifications:
+    - target: {fileID: 1150033941823920463, guid: ed485fcc35dac9e47953d9e69460e039,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 060550f574a671d4e88766c65f080876,
+        type: 3}
     - target: {fileID: 2057031816760502236, guid: ed485fcc35dac9e47953d9e69460e039,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -372,7 +378,7 @@ PrefabInstance:
     - target: {fileID: 2057031816760502236, guid: ed485fcc35dac9e47953d9e69460e039,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 147
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 2057031816760502236, guid: ed485fcc35dac9e47953d9e69460e039,
         type: 3}
@@ -414,11 +420,27 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2057031816760502236, guid: ed485fcc35dac9e47953d9e69460e039,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2057031816760502236, guid: ed485fcc35dac9e47953d9e69460e039,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2243700689327546589, guid: ed485fcc35dac9e47953d9e69460e039,
         type: 3}
       propertyPath: m_Name
       value: MySlider
       objectReference: {fileID: 0}
+    - target: {fileID: 3108403222513843846, guid: ed485fcc35dac9e47953d9e69460e039,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a5d10bda6ee061a428f7a37678bbcd54,
+        type: 3}
     - target: {fileID: 3939102323569670787, guid: ed485fcc35dac9e47953d9e69460e039,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -427,6 +449,11 @@ PrefabInstance:
     - target: {fileID: 3939102323569670787, guid: ed485fcc35dac9e47953d9e69460e039,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5783044105514787812, guid: ed485fcc35dac9e47953d9e69460e039,
+        type: 3}
+      propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

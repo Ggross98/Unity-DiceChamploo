@@ -24,7 +24,12 @@ public class MapEventView : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        textBar.SetActive(true);
+        if (image.interactable)
+        {
+            transform.SetAsLastSibling();
+            textBar.SetActive(true);
+
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)

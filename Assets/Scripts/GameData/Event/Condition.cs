@@ -13,9 +13,30 @@ class Condition
 
     public override string ToString()
     {
-        return "确定";
+        return "";
     }
 }
+class LuckCondition : Condition
+{
+    int value;
+
+    public LuckCondition(int v)
+    {
+        value = v;
+    }
+
+    public override bool CheckCondition(List<DiceFaceData> dices)
+    {
+        return Random.Range(1,101) < value;
+    }
+
+    public override string ToString()
+    {
+        return "成功率: %" + value.ToString();
+    }
+
+}
+
 
 class GoldCondition : Condition
 {
@@ -75,7 +96,7 @@ class DiceColorCondition : Condition
 
     public override string ToString()
     {
-        string result = "投掷: ";
+        string result = "需要骰子: ";
         string prefix = "";
 
         if (Red > 0)

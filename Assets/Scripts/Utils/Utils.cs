@@ -89,6 +89,17 @@ public class Utils
 
                 str += "获得" + effect.value + "护盾。";
                 break;
+
+            case ComboEffect.EffectType.Stun:
+
+                str += "击晕。";
+                break;
+
+            case ComboEffect.EffectType.ShieldDamage:
+                if (!effect.toEnemy) str += "对己方";
+                else str += "对";
+                str += "护盾造成" + effect.value + "伤害。";
+                break;
         }
 
         return str;

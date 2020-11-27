@@ -75,7 +75,7 @@ public class GameEventScene : SceneStateBase<GameEventScene>
     void ShowMovement()
     {
         eventTitle.text = eventSystem.GetEventDiscription();
-
+        
         eventDescription.text = eventSystem.GetMovementDiscription();
 
         ShowOptions();
@@ -102,10 +102,21 @@ public class GameEventScene : SceneStateBase<GameEventScene>
             GameObject obj = Instantiate(optionPrefab, optionField);
             obj.name = i + "";
 
+
             OptionView view1 = obj.GetComponent<OptionView>();
 
-            view1.SetName(eventSystem.GetOptionDiscription()[i]);
-            view1.SetButtonText(eventSystem.GetConditionDiscription()[i]);
+            view1.SetWidth(optionField.GetComponent<RectTransform>().sizeDelta.x);
+
+            //view1.SetName(eventSystem.GetOptionDiscription()[i]);
+            //view1.SetButtonText(eventSystem.GetConditionDiscription()[i]);
+
+            string option = eventSystem.GetOptionDiscription()[i];
+            if (!eventSystem.GetConditionDiscription()[i].Equals(""))
+            {
+                option += "(" + eventSystem.GetConditionDiscription()[i] + ")";
+            }
+            view1.SetName(option);
+            view1.SetButtonText("确定");
 
             view1.GetButton().onClick.AddListener(delegate {
 
@@ -135,14 +146,16 @@ public class GameEventScene : SceneStateBase<GameEventScene>
 
     void EndEvent()
     {
-        Debug.Log("End Event");
-        eventSystem.Settlement();
+        //Debug.Log("End Event");
+        //eventSystem.Settlement();
 
         GameController.Instance.FinishStage();
     }
 
     void ExecuteOption(OptionResult or)
     {
+        eventSystem.Settlement();
+
         switch (or)
         {
             case OptionResult.Ending:
@@ -169,12 +182,14 @@ public class GameEventScene : SceneStateBase<GameEventScene>
             case OptionResult.Battle:
 
 
-                eventSystem.Settlement();
-
+                
                 GameController.Instance.StartBattle(eventSystem.GetNextBattle());
 
                 break;
         }
+
+        playerTeamView.Refresh();
+
     }
 
     protected override void LoadUIObjects()
@@ -192,7 +207,7 @@ public class GameEventScene : SceneStateBase<GameEventScene>
         playerTeamView.CreateCharacterObjects(characters);
         playerTeamView.HideCharacterInfo();
 
-
+        playerTeamView.Refresh();
 
         //4、创建事件信息UI
         ShowMovement();
@@ -206,11 +221,12 @@ public class GameEventScene : SceneStateBase<GameEventScene>
         pausePanel = Instantiate(Resources.Load<GameObject>("Prefabs/PausePanel"), GameObject.Find("Canvas").transform).GetComponent<PausePanel>();
 
         pausePanel.quitButton.onClick.AddListener(delegate { BackToMenu(); });
-        pausePanel.Resume();
+        //pausePanel.Resume();
 
         pauseButton = status.pauseButton;
         pauseButton.onClick.AddListener(delegate { pausePanel.Pause(); });
 
+        pausePanel.gameObject.SetActive(false);
     }
 
     

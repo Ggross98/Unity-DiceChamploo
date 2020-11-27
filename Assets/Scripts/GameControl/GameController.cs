@@ -79,9 +79,30 @@ public class GameController : SingletonTemplate<GameController>
         {
             gameData.playerTeamData.Recruit(cd);
 
-            Debug.Log("recruit!");
+            //Debug.Log("recruit!");
             return true;
         }
+    }
+
+    public bool RecruitRandomMainCharacter()
+    {
+        int id;
+        bool repeat;
+
+        do
+        {
+            repeat = false;
+
+            id = Random.Range(1, 6);
+
+            foreach (CharacterData cd in gameData.playerTeamData.characters)
+            {
+                if (cd.index == id) repeat = true;
+            }
+
+        } while (repeat);
+
+        return RecruitCharacter(CharacterData.GetCharacterData(id));
     }
 
     public void GainGold(int delta)
@@ -101,6 +122,7 @@ public class GameController : SingletonTemplate<GameController>
 
     public void StartStage(Stage s)
     {
+        Debug.Log("Start stage" + s.pos);
         gameData.progress.playerPos = s.pos;
 
         if (s.IsBattle())
@@ -117,27 +139,26 @@ public class GameController : SingletonTemplate<GameController>
     public void StartEvent(EventDataBase dt)
     {
         gameData.progress.nextEventData = dt;
-
+        Debug.Log("Start Event");
         LoadScene("GameEvent");
-        AudioManager.Instance.ChangeBGM("BGM_Tense");
+        //AudioManager.Instance.ChangeBGM("BGM_Tense");
         //AudioManager.Instance.PlaySoundEffect("SE_Beep1");
     }
 
     public void StartBattle(BattleData bd)
     {
         gameData.progress.nextEventData = bd;
-        Debug.Log("start battle! " + bd);
+        Debug.Log("Start battle! ");
 
         LoadScene("GameBattle");
-        AudioManager.Instance.ChangeBGM("BGM_Kill");
+        //AudioManager.Instance.ChangeBGM("BGM_Kill");
     }
 
     public void FinishStage()
     {
         if (playing)
         {
-            Debug.Log("Finish stage");
-
+            
             //是否完成一个大关
             if (gameData.progress.FinishStage())
             {
@@ -157,7 +178,7 @@ public class GameController : SingletonTemplate<GameController>
             }
             else
             {
-                AudioManager.Instance.ChangeBGM("BGM_IntroEdit");
+                //AudioManager.Instance.ChangeBGM("BGM_IntroEdit");
                 LoadScene("GameMap");
             }
         }
@@ -185,12 +206,28 @@ public class GameController : SingletonTemplate<GameController>
 
     public void LoadScene(string name)
     {
+        switch (name)
+        {
+            case "GameMap":
+                AudioManager.Instance.ChangeBGM("BGM_IntroEdit");
+                break;
+            case "GameEvent":
+                break;
+            case "GameBattle":
+                AudioManager.Instance.ChangeBGM("BGM_Kill");
+                break;
+            case "GameSettlement":
+                AudioManager.Instance.ChangeBGM("BGM_BlueRainInKyoto");
+                break;
+        }
+
         SceneManager.LoadScene(name);
     }
 
     public void StartGame() {
 
         playing = true;
+        Resume();
 
         //gameData = new GameData();
 
@@ -205,7 +242,7 @@ public class GameController : SingletonTemplate<GameController>
         won = false;
         EndGame();
         LoadScene("GameSettlement");
-        AudioManager.Instance.ChangeBGM("BGM_BlueRainInKyoto");
+        //AudioManager.Instance.ChangeBGM("BGM_BlueRainInKyoto");
     }
 
     public void GameWin()
@@ -214,7 +251,7 @@ public class GameController : SingletonTemplate<GameController>
         won = true;
         EndGame();
         LoadScene("GameSettlement");
-        AudioManager.Instance.ChangeBGM("BGM_BlueRainInKyoto");
+        //AudioManager.Instance.ChangeBGM("BGM_BlueRainInKyoto");
     }
 
     public void EndGame()

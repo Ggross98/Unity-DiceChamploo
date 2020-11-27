@@ -28,12 +28,18 @@ public class CharacterView : MonoBehaviour
         lockIcon.gameObject.SetActive(!a);
     }
 
+    public bool GetInteractive()
+    {
+        return button.interactable;
+    }
+
     public void ShowCharacter(CharacterData cd)
     {
         if(cd == null)
         {
             nameText.text = "";
             healthText.text = "";
+            portrait.gameObject.SetActive(false);
 
         }
         else
@@ -41,6 +47,9 @@ public class CharacterView : MonoBehaviour
             SetName(cd.name);
             SetHealth(cd.hp, cd.maxHp);
             SetPortrait(cd.portrait);
+
+            portrait.sprite = cd.portrait;
+            portrait.gameObject.SetActive(true);
         }
     }
 

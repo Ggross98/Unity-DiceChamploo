@@ -12,12 +12,12 @@ public class GameStartScene : SceneStateBase<GameStartScene>
     #region ui组件
 
     [SerializeField]
-    CharacterInfo mainCharacterInfo, secondCharacterInfo;
+    CharacterInfo firstCharacterInfo, secondCharacterInfo;
 
-    CharacterData mainCharacter, secondCharacter;
+    CharacterData firstCharacter, secondCharacter;
 
     CharacterData[] teammates;
-    int teamIndex;
+    int firstTeamIndex, secondTeamIndex;
 
 
     #endregion
@@ -41,7 +41,7 @@ public class GameStartScene : SceneStateBase<GameStartScene>
 
         //生成队伍
         TeamData playerTeam = GameController.Instance.gameData.playerTeamData;
-        playerTeam.Recruit(mainCharacter);
+        playerTeam.Recruit(firstCharacter);
         playerTeam.Recruit(secondCharacter);
        
 
@@ -51,12 +51,39 @@ public class GameStartScene : SceneStateBase<GameStartScene>
         //GameController.Instance.LoadScene("GameMap");
     }
 
-    public void ChangeTeammate()
+    public void ChangeTeammate(bool first)
     {
-        teamIndex++;
-        if (teamIndex >= teammates.Length) teamIndex = 0;
+        if (first)
+        {
+            do {
 
-        secondCharacter = teammates[teamIndex];
+                firstTeamIndex++;
+                if (firstTeamIndex >= teammates.Length) firstTeamIndex = 0;
+
+
+            } while (firstTeamIndex == secondTeamIndex);
+
+            
+
+            firstCharacter = teammates[firstTeamIndex];
+
+        }
+        else
+        {
+            do {
+
+                secondTeamIndex++;
+                if (secondTeamIndex >= teammates.Length) secondTeamIndex = 0;
+
+
+            } while (firstTeamIndex == secondTeamIndex);
+
+            
+            secondCharacter = teammates[secondTeamIndex];
+
+        }
+
+
 
         RefreshUIObjects();
     }
@@ -64,22 +91,27 @@ public class GameStartScene : SceneStateBase<GameStartScene>
     protected override void LoadUIObjects()
     {
         //1、生成两个角色的数据，并显示在信息栏中
-        mainCharacter = CharacterData.GetCharacterData(1);
+        //firstCharacter = CharacterData.GetCharacterData(1);
 
         teammates = new CharacterData[] {
+            CharacterData.GetCharacterData(1),
             CharacterData.GetCharacterData(2),
             CharacterData.GetCharacterData(3),
+            CharacterData.GetCharacterData(4),
+            CharacterData.GetCharacterData(5),
         };
 
-        teamIndex = 0;
-        secondCharacter = teammates[0];
+        firstTeamIndex = 0;
+        firstCharacter = teammates[0];
+        secondTeamIndex = 1;
+        secondCharacter = teammates[1];
 
         RefreshUIObjects();
     }
 
     protected override void RefreshUIObjects()
     {
-        mainCharacterInfo.ShowCharacter(mainCharacter);
+        firstCharacterInfo.ShowCharacter(firstCharacter);
         secondCharacterInfo.ShowCharacter(secondCharacter);
     }
 

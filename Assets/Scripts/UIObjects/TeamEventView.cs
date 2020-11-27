@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -16,7 +18,9 @@ public class TeamEventView : MonoBehaviour
     [HideInInspector]
     public CharacterData selectedCharacter;
 
-    
+    private CharacterData mouseOnCharacter;
+
+    private bool mouseFixed = false;
     
     //下方队伍成员的预制体和列表
     private GameObject characterEventViewPrefab;
@@ -26,7 +30,9 @@ public class TeamEventView : MonoBehaviour
     private Dictionary<CharacterData, CharacterEventView> characters = new Dictionary<CharacterData, CharacterEventView>();
 
     [SerializeField]
-    Transform characterEventViewField; //显示玩家角色的区域，使用水平网格布局
+    Transform[] characterEventViewFields;
+    //Transform characterEventViewField; //显示玩家角色的区域，使用水平网格布局
+
 
     private float fieldWidth = 200, fieldHeight = 200; //角色区域的大小
 
@@ -75,7 +81,10 @@ public class TeamEventView : MonoBehaviour
         {
             CharacterData c = chs[i];
 
-            GameObject obj = Instantiate(characterEventViewPrefab, characterEventViewField);
+            if (!c.IsAlive()) continue;
+
+            GameObject obj = Instantiate(characterEventViewPrefab, characterEventViewFields[i]);
+            obj.transform.localPosition = new Vector3();
 
             obj.name = "角色" + (i + 1);
 
@@ -86,6 +95,9 @@ public class TeamEventView : MonoBehaviour
             //设置大小
             view.SetSize(fieldHeight);
 
+            UIEventListener btnListener = view.gameObject.AddComponent<UIEventListener>();
+
+            /*
             view.GetButton().onClick.AddListener(delegate
             {
                 //Debug.Log("click character");
@@ -96,7 +108,41 @@ public class TeamEventView : MonoBehaviour
 
                 info.gameObject.SetActive(true);
                 info.ShowCharacter(selectedCharacter);
-            });
+            });*/
+
+            btnListener.OnClick += delegate {
+
+                selectedCharacter = c;
+                mouseFixed = true;
+
+                CancelSelectAll();
+                view.ShowAura(true);
+
+                info.gameObject.SetActive(true);
+                info.ShowCharacter(selectedCharacter);
+
+            };
+
+            btnListener.OnMouseExit += delegate {
+
+                mouseOnCharacter = null;
+
+                if (!mouseFixed)
+                {
+                    info.gameObject.SetActive(false);
+                }
+
+            };
+            btnListener.OnMouseEnter += delegate {
+
+                mouseOnCharacter = c;
+
+                if (!mouseFixed)
+                {
+                    info.gameObject.SetActive(true);
+                    info.ShowCharacter(mouseOnCharacter);
+                }
+            };
 
             characters.Add(c, view);
 
@@ -176,6 +222,7 @@ public class TeamEventView : MonoBehaviour
     {
         foreach(CharacterEventView view in characterEventViewList)
         {
+            
             view.ShowAura(false);
         }
     }
@@ -216,16 +263,26 @@ public class TeamEventView : MonoBehaviour
             if (Input.GetMouseButtonUp(1))
             {
                 HideCharacterInfo();
+                mouseFixed = false;
             }
         }
+    }
+
+    public CharacterEventView GetCharacterView(CharacterData cd)
+    {
+        if (characters.ContainsKey(cd))
+        {
+            return characters[cd];
+        }
+        return null;
     }
 
     private void Awake()
     {
         characterEventViewPrefab = Resources.Load<GameObject>("Prefabs/CharacterEventViewPrefab");
 
-        fieldWidth = characterEventViewField.GetComponent<RectTransform>().sizeDelta.x;
-        fieldHeight = characterEventViewField.GetComponent<RectTransform>().sizeDelta.y;
+        fieldWidth = characterEventViewFields[0].GetComponent<RectTransform>().sizeDelta.x;
+        fieldHeight = characterEventViewFields[0].GetComponent<RectTransform>().sizeDelta.y;
     }
 
 }

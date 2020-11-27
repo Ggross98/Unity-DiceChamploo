@@ -138,6 +138,21 @@ public class BattleSystem : MonoBehaviour
             }
             switch (effect.type)
             {
+                case ComboEffect.EffectType.ShieldDamage:
+                    if (!effect.toEnemy)
+                    {
+                        playerShield -= effect.value;
+                        if (playerShield < 0) playerShield = 0;
+
+                    }
+                    else
+                    {
+                        enemyShield -= effect.value;
+                        if (enemyShield < 0) enemyShield = 0;
+
+                    }
+                    break;
+
                 case ComboEffect.EffectType.Damage:
 
                     if (effect.toEnemy)
@@ -174,11 +189,13 @@ public class BattleSystem : MonoBehaviour
                     {
                         if (!effect.isAreaEffect)
                         {
-                            playerTeamView.selectedCharacter.Damage(effect.value);
+                            CharacterData toDamage = playerTeam.characters[Random.Range(0, playerTeam.characters.Count)];
+
+                            toDamage.Damage(effect.value);
                         }
                         else
                         {
-                            foreach (CharacterData cd in enemyTeam.characters)
+                            foreach (CharacterData cd in playerTeam.characters)
                             {
                                 cd.Damage(effect.value);
                             }
@@ -267,6 +284,21 @@ public class BattleSystem : MonoBehaviour
 
                 switch (effect.type)
                 {
+                    case ComboEffect.EffectType.ShieldDamage:
+                        if (effect.toEnemy)
+                        {
+                            playerShield -= effect.value;
+                            if (playerShield < 0) playerShield = 0;
+
+                        }
+                        else
+                        {
+                            enemyShield -= effect.value;
+                            if (enemyShield < 0) enemyShield = 0;
+
+                        }
+                        break;
+
                     case ComboEffect.EffectType.Damage:
 
                         if (effect.toEnemy)
@@ -304,10 +336,26 @@ public class BattleSystem : MonoBehaviour
                         }
                         else
                         {
-                            /*
+                            
                             if (!effect.isAreaEffect)
                             {
-                                playerTeamView.selectedCharacter.Damage(effect.value);
+
+                                int count = enemyTeamView.team.characters.Count;
+                                CharacterData toDamage = enemyTeamView.team.characters[Random.Range(0, count)];
+
+                                toDamage.Damage(effect.value);
+
+                                /*
+                                if (enemyTeamView.selectedCharacter == null)
+                                {
+                                    int count = enemyTeamView.team.characters.Count;
+                                    enemyTeamView.selectedCharacter =
+                                }
+                                else
+                                {
+
+                                }
+                                enemyTeamView.selectedCharacter.Damage(effect.value);*/
                             }
                             else
                             {
@@ -315,7 +363,7 @@ public class BattleSystem : MonoBehaviour
                                 {
                                     cd.Damage(effect.value);
                                 }
-                            }*/
+                            }
                         }
 
                         break;
@@ -366,7 +414,7 @@ public class BattleSystem : MonoBehaviour
 
     public string GetRewardsInfo()
     {
-        string info = "";
+        string info = "  ";
         for (int i = 0; i < data.rewards.Count; i++)
         {
             info += data.rewards[i].ToString();
@@ -416,9 +464,12 @@ public class BattleSystem : MonoBehaviour
 
                 
                 rollView.RollAllDices();
+                //显示组合
+                rollView.ShowComboHint(comboView.GetObjectList());
+
             }
 
-            
+
 
         });
 
@@ -447,7 +498,7 @@ public class BattleSystem : MonoBehaviour
         rollView.ClearDiceObjects();
         comboView.ClearDiceObjects();
 
-        Debug.Log("敌人数量："+enemyTeam.characters.Count);
+        //Debug.Log("敌人数量："+enemyTeam.characters.Count);
         
 
         if (playerTurn) StartEnemyTurn();
@@ -464,7 +515,7 @@ public class BattleSystem : MonoBehaviour
     /// <param name="obj"></param>
     public void ClickDice(DiceObject obj)
     {
-        if (!rolled) return;
+        if (!rolled || !playerTurn) return;
 
         if (rollView.ContainsDiceObject(obj))
         {
@@ -479,12 +530,15 @@ public class BattleSystem : MonoBehaviour
         }
         else {
 
+            return;
 
         }
 
+        rollView.ShowComboHint(comboView.GetObjectList());
+
         ComboData cd = comboView.FindComboAndShow();
 
-        Debug.Log(cd);
+        //Debug.Log(cd);
 
         if (cd== null)
         {
@@ -508,6 +562,9 @@ public class BattleSystem : MonoBehaviour
                     //取消显示
                     comboView.ShowCombo(null);
 
+                    //显示组合
+                    rollView.ShowComboHint(comboView.GetObjectList());
+
                     //检测胜利
                     CheckWin();
 
@@ -526,6 +583,7 @@ public class BattleSystem : MonoBehaviour
     private void StartPlayerTurn()
     {
         endTurnButton.interactable = true;
+        rollButton.interactable = true;
 
         playerShield = 0;
         ShowShield();
@@ -552,8 +610,7 @@ public class BattleSystem : MonoBehaviour
 
         rollButton.GetComponentInChildren<Text>().text = "Roll(" + leftRollCount + ")";
 
-        rollButton.interactable = true;
-
+        
         turnText.text = "玩家回合";
     }
 
@@ -562,6 +619,7 @@ public class BattleSystem : MonoBehaviour
     /// </summary>
     private void StartEnemyTurn()
     {
+        rollButton.interactable = false;
         endTurnButton.interactable = false;
 
         enemyShield = 0;
@@ -572,7 +630,7 @@ public class BattleSystem : MonoBehaviour
         rollView .CreateDiceObjects(enemyTeam.characters);
 
 
-        rollButton.interactable = false;
+        //rollButton.interactable = false;
         turnText.text = "敌方回合";
 
         StartCoroutine(EnemyAction());
@@ -590,34 +648,36 @@ public class BattleSystem : MonoBehaviour
 
         //依次使用技能，并判定胜负
 
+        var toDestroy = new List<DiceObject>();
+
         while (list.Count > 0)
         {
             DiceObject obj = list[0];
 
             list.RemoveAt(0);
 
-            
-            rollView.RemoveDiceObject(obj);
-
-            if (obj.currentFace.index == 0)
+            if (ComboData.MatchCombo(new List<DiceFaceData> { obj.currentFace })==null)
             {
-                Destroy(obj.gameObject);
-
+                //Destroy(obj.gameObject);
+                toDestroy.Add(obj);
                 continue;
             }
 
-
+            rollView.RemoveDiceObject(obj);
             comboView.AddDiceObject(obj);
 
+            yield return new WaitForSeconds(0.5f);
 
 
             ComboData cd = comboView.FindComboAndShow();
-            
+
+            yield return new WaitForSeconds(0.5f);
+
 
             //执行技能效果
             EnemyExecute(cd);
 
-            //清空comboView里的骰子对象
+            //清空骰子对象
             comboView.ClearDiceObjects();
 
             //取消combo显示
@@ -627,12 +687,13 @@ public class BattleSystem : MonoBehaviour
             CheckWin();
 
 
-            yield return new WaitForSeconds(1f);
-
+            
         }
 
+        foreach (DiceObject obj in toDestroy) Destroy(obj.gameObject);
+
+        //rollView.ClearDiceObjects();
         EndTurn();
-        //结束回合
 
         yield return null;
     }

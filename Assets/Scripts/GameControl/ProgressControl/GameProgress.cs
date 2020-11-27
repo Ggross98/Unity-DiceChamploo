@@ -43,6 +43,8 @@ public class GameProgress
     /// <returns>是否结束了一整个大关</returns>
     public bool FinishStage()
     {
+        Debug.Log("Finished a stage");
+
         Stage cStage = stages[playerPos.x, playerPos.y];
 
         cStage.isFinished = true;
@@ -60,9 +62,12 @@ public class GameProgress
     public void StartLevel()
     {
 
+        Debug.Log("Start level");
+
         level++;
 
-        CreateStages(6, 4, 7, 8);
+        CreateStages(7, 5, 13, 5);
+        Debug.Log("Stages created successfully!");
     }
 
     public Stage GetCurrentStage()
@@ -139,13 +144,6 @@ public class GameProgress
             width = w;
             height = h;
 
-            //暂时
-            if(level ==2)
-            {
-                width = 3;
-                height = 1;
-            }
-
             count = eventCount + battleCount;
         }
 
@@ -179,7 +177,7 @@ public class GameProgress
 
         playerPos = new Vector2Int(0, startY);
 
-        eventCount--;
+        //eventCount--;
 
         //随机boss位置
         int endY = Random.Range(0, height);
@@ -199,23 +197,23 @@ public class GameProgress
         bossStage.isBossStage = true;
         SetStage(bossStage, width - 1, endY);
 
-        battleCount--;
+        //battleCount--;
 
-        int total = 0;
+        //int total = 0;
 
         //随机生成所有战斗、事件
         List<EventData> events = EventData.GetRandomEventDataList(level, eventCount);
         List<BattleData> battles = BattleData.GetRandomBattleDataList(level, battleCount);
 
         //生成一条从初始位置到结束位置的路径
-        int turn = Random.Range(0,width);
+        int turn = Random.Range(1,width-1);
 
         for(int i = 1; i <= turn; i++)
         {
             Stage stage = CreateStage(events, battles);
 
             SetStage(stage, i, startY);
-            total++;
+            //total++;
         }
 
         for(int i = turn; i < width-1; i++)
@@ -225,7 +223,7 @@ public class GameProgress
             Stage stage = CreateStage(events, battles);
 
             SetStage(stage, i, endY);
-            total++;
+            //total++;
         }
 
         if(startY != endY)
@@ -235,12 +233,58 @@ public class GameProgress
                 Stage stage = CreateStage(events, battles);
 
                 SetStage(stage, turn, j);
-                total++;
+                //total++;
             }
         }
         
 
         //在其他位置补充
+
+        while(events.Count>0 || battles.Count>0)
+        {
+            Vector2Int pos = GetRandomEmptyPosition();
+            Stage stage = CreateStage(events, battles);
+            SetStage(stage, pos.x, pos.y);
+            //total++;
+        }
+    }
+
+    private Vector2Int GetRandomEmptyPosition()
+    {
+
+        int x=0,y=0;
+        bool access = false;
+
+        while (!access)
+        {
+            x = Random.Range(0, width);
+            y = Random.Range(0, height);
+
+            if (stages[x, y] != null) continue;
+
+            if (x > 0)
+            {
+                if (stages[x - 1, y] != null && !stages[x - 1, y].isBossStage) access = true;
+            }
+
+            if (x < width - 1)
+            {
+                if (stages[x + 1, y] != null && !stages[x + 1, y].isBossStage) access = true;
+            }
+
+            if (y > 0)
+            {
+                if (stages[x, y - 1] != null && !stages[x, y - 1].isBossStage) access = true;
+            }
+
+            if (y < height - 1)
+            {
+                if (stages[x, y + 1] != null && !stages[x, y + 1].isBossStage) access = true;
+            }
+        }
+
+        return new Vector2Int(x, y);
+        
     }
 
     private static Stage CreateStage(List<EventData> e, List<BattleData> b)

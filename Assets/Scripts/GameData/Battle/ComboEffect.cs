@@ -5,7 +5,7 @@ using UnityEngine;
 public class ComboEffect
 {
 
-    public enum EffectType { Damage, Shield, Heal };
+    public enum EffectType { Damage, Shield, Heal, Stun, ShieldDamage };
 
     public EffectType type = EffectType.Damage;
 

@@ -8,6 +8,12 @@ using UnityEngine;
 /// </summary>
 public class MainMenuScene : SceneStateBase<MainMenuScene>
 {
+    [SerializeField]
+    private SettingPanel settingPanel;
+
+    [SerializeField]
+    private GameObject tutorialPanel;
+
     protected override void LoadPrefabs()
     {
         //throw new System.NotImplementedException();
@@ -38,6 +44,27 @@ public class MainMenuScene : SceneStateBase<MainMenuScene>
         base.Start();
 
         AudioManager.Instance.PlayBGM("BGM_EveryDayIsNight");
+    }
+
+    private void Awake()
+    {
+
+        Screen.SetResolution(1920, 1080, true);
+    }
+
+    public void Setting()
+    {
+        settingPanel.SetActive(true);
+    }
+
+    public void Tutorial()
+    {
+        tutorialPanel.SetActive(true);
+    }
+
+    public void HideTutorial()
+    {
+        tutorialPanel.SetActive(false);
     }
 
 

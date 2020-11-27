@@ -8,13 +8,13 @@ using UnityEngine.UI;
 /// </summary>
 public class DiceView : MonoBehaviour
 {
-    Transform diceLayout;
+    //Transform diceLayout;
 
     //T[] contents = new T[6];
 
-    public Sprite[] sprites;
+    private Sprite[] sprites;
 
-    public Image[] images;
+    private Image[] images;
 
     //public void AddDiceFace(/**/) { }
 
@@ -37,6 +37,7 @@ public class DiceView : MonoBehaviour
         {
             images[i].sprite = faces[i].icon;
             //Debug.Log("i "+i);
+            
         }
     }
 
@@ -47,6 +48,7 @@ public class DiceView : MonoBehaviour
         //sprites = Resources.LoadAll<Sprite>("Dice");
         images = GetComponentsInChildren<Image>();
         
+
     }
 
     private void Start()

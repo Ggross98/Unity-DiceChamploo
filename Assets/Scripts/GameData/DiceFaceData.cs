@@ -37,13 +37,49 @@ public class DiceFaceData
 
     private static Dictionary<string, DiceFaceData> diceFaceDictionary = new Dictionary<string, DiceFaceData>() {
 
-        { "Blank",
+        { "BlankGreen",
             new DiceFaceData(
                 0,
                 Type.None,
-                Resources.Load<Sprite>("Dices/Dice_Blank")
+                Resources.Load<Sprite>("Dices/Dice_BlankGreen")
             )
         },
+        { "BlankRed",
+            new DiceFaceData(
+                0,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_BlankRed")
+            )
+        },
+        { "BlankBlue",
+            new DiceFaceData(
+                0,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_BlankBlue")
+            )
+        },
+        { "BlankBrown",
+            new DiceFaceData(
+                0,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_BlankBrown")
+            )
+        },
+        { "BlankTeal",
+            new DiceFaceData(
+                0,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_BlankTeal")
+            )
+        },
+        { "BlankRose",
+            new DiceFaceData(
+                0,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_BlankRose")
+            )
+        },
+
 
         { "Attack",
            new DiceFaceData(
@@ -133,9 +169,65 @@ public class DiceFaceData
 
         },
 
+        { "DoublePunch",
 
+            new DiceFaceData(
+                107,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_DoublePunch")
+            )
 
+        },
 
+        { "Bomb",
+
+            new DiceFaceData(
+                104,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Bomb")
+            )
+
+        },
+
+        { "Spear",
+
+            new DiceFaceData(
+                105,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Spear")
+            )
+
+        },
+
+        { "Shotgun",
+
+            new DiceFaceData(
+                106,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Shotgun")
+            )
+
+        },
+
+        { "Shield",
+
+            new DiceFaceData(
+                108,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_Shield")
+            )
+
+        },
+
+        { "DoubleShield",
+
+            new DiceFaceData(
+                109,
+                Type.None,
+                Resources.Load<Sprite>("Dices/Dice_DoubleShield")
+            )
+
+        },
 
     };
 
@@ -147,7 +239,7 @@ public class DiceFaceData
         }
         else
         {
-            return diceFaceDictionary["Blank"];
+            return diceFaceDictionary["BlankGreen"];
         }
     }
 

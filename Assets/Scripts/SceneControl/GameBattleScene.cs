@@ -136,10 +136,11 @@ public class GameBattleScene : SceneStateBase<GameBattleScene>
         pausePanel = Instantiate(Resources.Load<GameObject>("Prefabs/PausePanel"),GameObject.Find("Canvas").transform).GetComponent<PausePanel>();
 
         pausePanel.quitButton.onClick.AddListener(delegate { BackToMenu(); });
-        pausePanel.Resume();
+        //pausePanel.Resume();
 
         status.pauseButton.onClick.AddListener(delegate { pausePanel.Pause(); });
 
+        pausePanel.gameObject.SetActive(false);
 
         //启动战斗系统
 

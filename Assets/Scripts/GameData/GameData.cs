@@ -23,9 +23,9 @@ public class GameData
     public GameData()
     {
         difficulty = 1;
-        gold = 0;
+        gold = 50;
         time = 0;
-        skillPoint = 0;
+        skillPoint = 5;
         progress = new GameProgress();
         playerTeamData = new TeamData();
     }

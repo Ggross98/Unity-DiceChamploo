@@ -43,6 +43,7 @@ public class CharacterInfo : MonoBehaviour
     void SetLevel(int i)
     {
         levelText.text = "Level " + i;
+
     }
 
     void SetImage(Sprite s)
@@ -103,6 +104,10 @@ public class CharacterInfo : MonoBehaviour
             SetHealth(cd.hp, cd.maxHp);
             SetImage(cd.portrait);
             SetLevel(cd.level);
+            if(cd.level == cd.maxLevel)
+            {
+                levelText.text += "(Max)";
+            }
 
             ShowDices(cd.dices);
         }

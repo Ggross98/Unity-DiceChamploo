@@ -80,6 +80,40 @@ public class EventSystem: MonoBehaviour
                     case EventReward.Type.Teammate:
                         GameController.Instance.RecruitCharacter(CharacterData.GetCharacterData(r.value));
                         break;
+
+
+                    case EventReward.Type.RandomMainCharacter:
+                        GameController.Instance.RecruitRandomMainCharacter();
+                        break;
+
+                    case EventReward.Type.Heal:
+                        var characters = GameController.Instance.gameData.playerTeamData.characters;
+
+                        if (r.valueType == 1)
+                        {
+                            foreach (CharacterData cd in characters)
+                            {
+                                cd.ChangeHP(r.value);
+                            }
+                        }
+                        else if (r.valueType == 0)
+                        {
+                            CharacterData min = characters[0];
+                            for (int i = 1; i < characters.Count; i++)
+                            {
+                                if (characters[i].hp < min.hp) min = characters[i];
+                            }
+                            min.ChangeHP(r.value);
+                        }
+                        break;
+
+                    case EventReward.Type.Damage:
+                        var characters1 = GameController.Instance.gameData.playerTeamData.characters;
+                        foreach(CharacterData cd in characters1)
+                        {
+                            cd.Damage(r.value);
+                        }
+                        break;
                 }
             }
         }
@@ -126,13 +160,20 @@ public class EventSystem: MonoBehaviour
     public string GetEventDiscription() { return data.description; }
 
     //返回当前Movement的描述
-    public string GetMovementDiscription() { return data.movements[currentMovement].FullDescription(); }
+    public string GetMovementDiscription() {
+        string des = data.movements[currentMovement].FullDescription();
+        if(des.Contains(" "))
+        {
+            des = des.Replace(" ", "\u00A0");
+        }
+        return des;
+    }
     
     //返回选项本身的描述
-    public string[] GetOptionDiscription() { return data.movements[currentMovement].getOptionDiscription(); }
+    public string[] GetOptionDiscription() { return data.movements[currentMovement].GetOptionDiscription(); }
 
     //返回选项判定条件的描述
-    public string[] GetConditionDiscription() { return data.movements[currentMovement].getConditionDiscription(); }
+    public string[] GetConditionDiscription() { return data.movements[currentMovement].GetConditionDiscription(); }
     
 }
 

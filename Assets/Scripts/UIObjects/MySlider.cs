@@ -10,7 +10,9 @@ public class MySlider : MonoBehaviour
     Slider slider;
 
     [SerializeField]
-    //Image frame, fill;
+    Text text;
+
+    public int value;
     
     public void SetRange(int min, int max)
     {
@@ -33,17 +35,26 @@ public class MySlider : MonoBehaviour
         if (value > slider.maxValue) value = (int)slider.maxValue;
         if (value < slider.minValue) value = (int)slider.minValue;
 
+        this.value = value;
         slider.value = value;
+    }
+
+    public void OnValueChange()
+    {
+        this.value = (int)slider.value;
+        SetText();
+    }
+
+    private void SetText()
+    {
+        text.text = value + "/" + slider.maxValue;
     }
 
     public void SetValue(int value, int max)
     {
         SetRange(0, max);
         SetValue(value);
+        SetText();
     }
 
-    public int GetValue()
-    {
-        return (int)slider.value;
-    }
 }

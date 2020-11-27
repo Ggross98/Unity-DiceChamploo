@@ -16,6 +16,8 @@ public class DiceObjectPanel : MonoBehaviour
 
     private float fieldWidth = 200, fieldHeight = 200; //骰子区域的大小
 
+    private int fieldCell = 5; //骰子区域划分为多少格
+
     public List<DiceObject> GetDiceObjects()
     {
         return diceObjects;
@@ -33,11 +35,28 @@ public class DiceObjectPanel : MonoBehaviour
 
         List<DiceFaceData> list = new List<DiceFaceData>();
 
+        bool[,] field = new bool[fieldCell, fieldCell];
+        for(int i = 0; i < field.GetLength(0); i++)
+        {
+            for(int j = 0; j < field.GetLength(1); j++)
+            {
+                field[i, j] = false;
+            }
+        }
+
         foreach (DiceObject obj in diceObjects)
         {
+            int x, y;
+            do
+            {
+                x = Random.Range(0, fieldCell);
+                y = Random.Range(0, fieldCell);
 
-            
-            DiceFaceData dfd = obj.RollTo(GetRandomPosition());
+            } while (field[x, y] == true);
+
+            field[x, y] = true;
+
+            DiceFaceData dfd = obj.RollTo(GetCellPosition(x,y));
             list.Add(dfd);
         }
 
@@ -53,6 +72,17 @@ public class DiceObjectPanel : MonoBehaviour
         //float y = fieldHeight/2;
 
         return new Vector2(x - fieldWidth / 2, y - fieldHeight / 2);
+    }
+
+    private Vector2 GetCellPosition(int _x, int _y)
+    {
+        float x = fieldWidth / fieldCell * _x;
+        float y = fieldHeight / fieldCell * _y;
+
+        float deltaX = Random.Range(-fieldWidth / fieldCell / 5, fieldWidth / fieldCell / 5);
+        float deltaY = Random.Range(-fieldHeight / fieldCell / 5, fieldHeight / fieldCell / 5);
+
+        return new Vector2(x + deltaX - fieldWidth / 2, y + deltaY - fieldHeight / 2);
     }
 
     public bool IsEmpty()
@@ -125,7 +155,7 @@ public class DiceObjectPanel : MonoBehaviour
 
         GameObject dice = Instantiate(diceObjectPrefab);
         DiceObject obj = dice.GetComponent<DiceObject>();
-
+        obj.showFullInfo = true;
         obj.Init(dd);
 
         return obj;
@@ -138,12 +168,82 @@ public class DiceObjectPanel : MonoBehaviour
     public void AddDiceObject(DiceObject obj)
     {
         obj.transform.SetParent(diceField, false);
+        obj.showFullInfo = true;
 
         diceObjects.Add(obj);
 
         obj.SetLocalPosition(GetRandomPosition());
 
         
+    }
+
+    public void ShowComboHint(List<DiceObject> selectedDices)
+    {
+        //Debug.Log("show combo hint");
+        foreach (DiceObject obj in selectedDices)
+        {
+            obj.StopShake();
+        }
+        foreach(DiceObject obj in ComboData.GetShakingObjects(selectedDices, diceObjects))
+        {
+            obj.Shake();
+        }
+
+        /*
+        //已经选到上面去的骰子
+        var selectedList = new List<DiceFaceData>();
+        foreach(DiceObject obj in selectedDices)
+        {
+            obj.StopShake();
+
+            selectedList.Add(obj.currentFace);
+        }
+
+        //下面的骰子
+        var rolledList = new List<DiceFaceData>();
+        foreach(DiceObject obj in diceObjects)
+        {
+            rolledList.Add(obj.currentFace);
+        }
+
+        //包含选中骰子的组合
+        var possible = ComboData.GetPossibleComboList(selectedList);
+
+
+        foreach(List<DiceFaceData> dfd in possible)
+        {
+            bool access = true;
+
+            foreach(DiceFaceData face in dfd)
+            {
+                if (ComboData.ContainsDiceFace(rolledList, face) || ComboData.ContainsDiceFace(selectedList, face))
+                {
+                    continue;
+                }
+                else
+                {
+                    access = false;
+                    break;
+                }
+            }
+
+            if (access)
+            {
+                foreach (DiceFaceData face in dfd)
+                {
+                    foreach(DiceObject obj in diceObjects)
+                    {
+                        if (obj.currentFace.Equals(face))
+                        {
+                            obj.Shake();
+                        }
+                    }
+                }
+            }
+            
+        }
+
+        */
     }
 
     /// <summary>
@@ -155,6 +255,7 @@ public class DiceObjectPanel : MonoBehaviour
     {
         if (diceObjects.Contains(obj))
         {
+            obj.StopShake();
             diceObjects.Remove(obj);
 
             return obj;

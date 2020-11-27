@@ -45,6 +45,11 @@ public class ComboView : MonoBehaviour
         return cd;
     }
 
+    public List<DiceObject> GetObjectList()
+    {
+        return diceObjects;
+    }
+
     public void ShowCombo(ComboData combo)
     {
         if(combo!=null)
@@ -60,9 +65,10 @@ public class ComboView : MonoBehaviour
 
         foreach(ComboEffect effect in combo.effects)
         {
-            info += Utils.GetComboEffectString(effect);
+            info += Utils.GetComboEffectString(effect) + "\n";
 
         }
+        info.Remove(info.Length - 1);
         //info.Remove(info.LastIndexOf('。'));
 
         description.text = info;
@@ -77,7 +83,7 @@ public class ComboView : MonoBehaviour
     public void AddDiceObject(DiceObject obj)
     {
         obj.transform.SetParent(diceObjectField);
-
+        obj.showFullInfo = false;
         diceObjects.Add(obj);
     }
 

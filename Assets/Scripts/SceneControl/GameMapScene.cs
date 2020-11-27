@@ -43,9 +43,8 @@ public class GameMapScene : SceneStateBase<GameMapScene>
     /// <summary>
     /// 解雇当前角色
     /// </summary>
-    public void Dismiss() {
+    public void ConfirmDismiss() {
 
-        if (selectedCharacter == null) return;
 
         //决定删除之后选定的角色
         int index = characters.FindIndex(a => a==selectedCharacter);
@@ -60,10 +59,27 @@ public class GameMapScene : SceneStateBase<GameMapScene>
             characterInfo.ShowCharacter(selectedCharacter);
         }
 
-        
+        //隐藏确认界面
+        dismissConfirmPanel.SetActive(false);
+
     }
 
-    
+    public void CancelDismiss()
+    {
+        dismissConfirmPanel.SetActive(false);
+    }
+
+    public void PressDismissButton()
+    {
+        if (selectedCharacter == null) return;
+
+        if (characters.Count <= 1) return;
+
+        //显示确认界面
+        dismissConfirmPanel.SetActive(true);
+    }
+
+
 
 
 
@@ -84,8 +100,13 @@ public class GameMapScene : SceneStateBase<GameMapScene>
     [SerializeField]
     Text teamCountText;
 
+    [SerializeField]
+    Scrollbar teamScroll;
+
     GameObject characterViewPrefab; //单个角色预览的预制体
     List<CharacterView> characterViewList = new List<CharacterView>();
+
+    private static int teamMaxCount = 5;
 
     //***************************队伍编辑面板
     [SerializeField]
@@ -94,8 +115,11 @@ public class GameMapScene : SceneStateBase<GameMapScene>
     [SerializeField]
     CharacterInfo characterInfo;
 
+    //[SerializeField]
+    //Button upgradeButton, dismissButton;
+
     [SerializeField]
-    Button upgradeButton, dismissButton;
+    GameObject dismissConfirmPanel;
 
     [SerializeField]
     Text skillPointTotal, skillPointUpgrade;
@@ -103,7 +127,7 @@ public class GameMapScene : SceneStateBase<GameMapScene>
 
     //****************************地图面板
 
-    GameObject mapViewPrefab; //地图上一个关卡的预制体
+    GameObject mapViewPrefab, mapRoadPrefab; //地图上一个关卡的预制体
 
     [SerializeField]
     Transform mapViewField;
@@ -116,6 +140,11 @@ public class GameMapScene : SceneStateBase<GameMapScene>
 
     [SerializeField]
     StatusBar status;
+
+    [SerializeField]
+    GameObject teamSizeWarning;
+
+    bool teamSizeOut = false;
 
     
     //****************************暂停面板
@@ -206,6 +235,9 @@ public class GameMapScene : SceneStateBase<GameMapScene>
         //加载事件数据
 
         //生成地图面板
+
+        Debug.Log("Creating map panel...");
+
         mapPanel.SetActive(true);
 
         Stage[,] stages = GameController.Instance.gameData.progress.stages;
@@ -229,6 +261,25 @@ public class GameMapScene : SceneStateBase<GameMapScene>
                 if (stage != null)
                 {
                     
+                    //生成道路
+                    if(j < maxY-1 && stages[i, j + 1] != null)
+                    {
+                        GameObject road = Instantiate(mapRoadPrefab, mapViewField);
+                        road.GetComponent<RectTransform>().sizeDelta = new Vector2(width, width / 10);
+                        road.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90);
+                        road.transform.localPosition = new Vector2(i * width - fieldWidth / 2 + width / 2, j * height - fieldHeight / 2 + height / 2);
+                    }
+
+                    if(i < maxX-1 && stages[i + 1, j]!= null)
+                    {
+                        GameObject road = Instantiate(mapRoadPrefab, mapViewField);
+                        road.GetComponent<RectTransform>().sizeDelta = new Vector2(width, width / 10);
+                        road.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 0);
+                        road.transform.localPosition = new Vector2(i * width - fieldWidth / 2 + width / 2, j * height - fieldHeight / 2 + height / 2);
+                    }
+
+                    //生成地图图标
+
                     GameObject obj = Instantiate(mapViewPrefab, mapViewField);
                     obj.name = stage.pos+"";
 
@@ -238,11 +289,19 @@ public class GameMapScene : SceneStateBase<GameMapScene>
 
                     mapViewList.Add(view);
 
-                    view.SetDescription("事件说明。单击进入事件");
+                    string mapInfo = "";
+                    if (stage.isBossStage) mapInfo = "BOSS关卡";
+                    else if (stage.IsBattle()) mapInfo = "战斗！";
+                    else mapInfo = "随机事件";
+                    view.SetDescription(mapInfo);
 
                     view.GetButton().onClick.AddListener(delegate
                     {
-                        GameController.Instance.StartStage(stage);
+                        if (!teamSizeOut)
+                        {
+                            GameController.Instance.StartStage(stage);
+
+                        }
 
                     });
 
@@ -255,13 +314,16 @@ public class GameMapScene : SceneStateBase<GameMapScene>
                 }
             }
         }
+
+        Debug.Log("Map panel created!");
         
         //加载队伍数据
         team = GameController.Instance.gameData.playerTeamData;
         characters = team.characters;
 
+        Debug.Log("Creating team preview...");
         //生成左侧队伍预览
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < Mathf.Max(5, characters.Count); i++)
         {
             GameObject obj = Instantiate(characterViewPrefab, characterViewField);
             obj.name = "角色预览" + (i + 1);
@@ -270,6 +332,7 @@ public class GameMapScene : SceneStateBase<GameMapScene>
             
             characterViewList.Add(view);
         }
+        Debug.Log("Team preview created!");
 
         RefreshUIObjects();
 
@@ -289,10 +352,12 @@ public class GameMapScene : SceneStateBase<GameMapScene>
         pausePanel = Instantiate(Resources.Load<GameObject>("Prefabs/PausePanel"), GameObject.Find("Canvas").transform).GetComponent<PausePanel>();
 
         pausePanel.quitButton.onClick.AddListener(delegate { BackToMenu(); });
-        pausePanel.Resume();
+        //pausePanel.Resume();
 
         pauseButton = status.pauseButton;
         pauseButton.onClick.AddListener(delegate { pausePanel.Pause(); });
+
+        pausePanel.gameObject.SetActive(false);
 
     }
 
@@ -344,6 +409,33 @@ public class GameMapScene : SceneStateBase<GameMapScene>
             }
             
         }
+
+        if (characterViewList.Count > teamMaxCount)
+        {
+            CharacterView view = characterViewList[teamMaxCount];
+            if (!view.GetInteractive())
+            {
+                characterViewList.Remove(view);
+                Destroy(view.gameObject);
+            }
+
+        }
+
+        if(characterViewList.Count > teamMaxCount)
+        {
+            teamScroll.gameObject.SetActive(true);
+
+            teamSizeOut = true;
+            teamSizeWarning.SetActive(true);
+        }
+        else
+        {
+            teamScroll.gameObject.SetActive(false);
+
+            teamSizeOut = false;
+            teamSizeWarning.SetActive(false);
+        }
+
     }
 
     private void Start()
@@ -366,6 +458,6 @@ public class GameMapScene : SceneStateBase<GameMapScene>
     {
         characterViewPrefab = (GameObject)Resources.Load("Prefabs/CharacterViewPrefab");
         mapViewPrefab = (GameObject)Resources.Load("Prefabs/MapViewPrefab");
-
+        mapRoadPrefab = (GameObject)Resources.Load("Prefabs/MapRoadPrefab");
     }
 }

@@ -18,8 +18,12 @@ public class AudioManager: SingletonTemplate<AudioManager>
 
     private static float fadeTime = 1f;
 
-    private static float bgMaxVolume = 1f;
+    [Range(0f,1f)]
+    private static float bgVolume = 1f, seVolume =1f;
 
+    //private static float bgMaxVolume = 1f;
+
+    private Coroutine fadeCoroutine = null;
 
     private void Awake()
     {
@@ -71,13 +75,47 @@ public class AudioManager: SingletonTemplate<AudioManager>
 
     }
 
+    public void SetBGMVolume(int v)
+    {
+        if (v < 0) v = 0;
+        if (v > 100) v = 100;
 
-    /// <summary>
-    /// 从头播放bgm
-    /// 如果要播放的就是当前bgm，则不进行操作
-    /// </summary>
-    /// <param name="audioName"></param>
-    public void PlayBGM(string audioName)
+        bgVolume = v/100f;
+        
+        if(fadeCoroutine== null)
+        {
+            bgAudioSource.volume = bgVolume;
+        }
+    }
+
+    public void SetSEVolume(int v)
+    {
+        if (v < 0) v = 0;
+        if (v > 100) v = 100;
+
+        seVolume = v/100f;
+
+        seAudioSource.volume = seVolume;
+
+    }
+
+    public int GetBGMVolumeInt()
+    {
+        return (int)(bgVolume * 100);
+    }
+
+    public int GetSEVolumeInt()
+    {
+        return (int)(seVolume * 100);
+    }
+
+
+        /// <summary>
+        /// 从头播放bgm
+        /// 如果要播放的就是当前bgm，则不进行操作
+        /// </summary>
+        /// <param name="audioName"></param>
+        public void PlayBGM(string audioName)
 
     {
 
@@ -104,7 +142,10 @@ public class AudioManager: SingletonTemplate<AudioManager>
         if (_soundDictionary.ContainsKey(audioName))
 
         {
-            StartCoroutine(FadeIn(audioName));
+            if (bgAudioSource.clip == _soundDictionary[audioName]) return;
+
+            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+            fadeCoroutine = StartCoroutine(FadeIn(audioName));
 
         }
     }
@@ -112,7 +153,7 @@ public class AudioManager: SingletonTemplate<AudioManager>
     private IEnumerator FadeIn(string audioName)
     {
         
-        float delta = bgMaxVolume / fadeTime;
+        float delta = bgVolume / fadeTime;
         while(bgAudioSource.volume > 0)
         {
             bgAudioSource.volume -= delta * Time.deltaTime;
@@ -120,12 +161,13 @@ public class AudioManager: SingletonTemplate<AudioManager>
         }
         bgAudioSource.clip = _soundDictionary[audioName];
         bgAudioSource.Play();
-        while (bgAudioSource.volume < bgMaxVolume)
+        while (bgAudioSource.volume < bgVolume)
         {
             bgAudioSource.volume += delta * Time.deltaTime;
             yield return null;
         }
 
+        fadeCoroutine = null;
         yield return null;
     }
 

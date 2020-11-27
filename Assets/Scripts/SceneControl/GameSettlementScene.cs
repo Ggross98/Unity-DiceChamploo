@@ -38,7 +38,7 @@ public class GameSettlementScene : SceneStateBase<GameSettlementScene>
         else
         {
             endingInfo.text = "游戏失败";
-            endingInfo.text = "你的伙伴一个接一个倒下了，最后你也没能坚持下去。在下一次挑战中相信你会做的更好。";
+            endingInfo.text = "你的伙伴一个接一个倒下了，最后你也没能坚持下去……在下一次挑战中相信你会做的更好。";
         }
     }
 

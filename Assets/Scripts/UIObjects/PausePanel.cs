@@ -11,18 +11,27 @@ public class PausePanel : MonoBehaviour
     [SerializeField]
     GameObject pausePanel;
 
-    public Button resumeButton, quitButton;
+    [SerializeField]
+    MySlider bgm, se;
 
+    public Button resumeButton, quitButton;
 
 
     public void Pause()
     {
+        bgm.SetValue(AudioManager.Instance.GetBGMVolumeInt(), 100);
+        se.SetValue(AudioManager.Instance.GetSEVolumeInt(), 100);
+
+
         pausePanel.SetActive(true);
         GameController.Instance.Pause();
     }
 
     public void Resume()
     {
+        AudioManager.Instance.SetBGMVolume(bgm.value);
+        AudioManager.Instance.SetSEVolume(se.value);
+
         pausePanel.SetActive(false);
         GameController.Instance.Resume();
 

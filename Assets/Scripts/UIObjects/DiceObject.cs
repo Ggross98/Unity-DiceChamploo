@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 
 /// <summary>
 /// 事件、战斗场景中的骰子对象
 /// </summary>
-public class DiceObject : MonoBehaviour
+public class DiceObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     //储存骰子某一面的信息
     public DiceData diceData;
@@ -18,10 +19,17 @@ public class DiceObject : MonoBehaviour
     Sprite[] sprites = new Sprite[6];
 
     [SerializeField]
-    Image image;
+    Image image, diceViewBackground;
 
     [SerializeField]
     Button button;
+
+    [SerializeField]
+    DiceView diceView;
+
+    public bool showFullInfo = false;
+
+    private bool shaking = false;
 
 
     //动画相关
@@ -45,6 +53,19 @@ public class DiceObject : MonoBehaviour
         currentFace = faces[0];
         image.sprite = sprites[0];
     }
+
+    public void ShowDiceView()
+    {
+        transform.SetAsLastSibling();
+        diceViewBackground.gameObject.SetActive(true);
+
+        diceView.Show(diceData);
+    }
+
+    public void HideDiceView()
+    {
+        diceViewBackground.gameObject.SetActive(false);
+    }
     
     public DiceFaceData Roll()
     {
@@ -63,8 +84,8 @@ public class DiceObject : MonoBehaviour
         float time = count * interval;
 
         DOTweenUtils.MoveTo(gameObject, pos, time);
-        DOTweenUtils.RotateAngle(gameObject, angle, time);
-        DOTweenUtils.ChangeScale(gameObject, mScale, time/2, time/2);
+        DOTweenUtils.RotateAngle(image.gameObject, angle, time);
+        DOTweenUtils.ChangeScale(image.gameObject, mScale, time/2, time/2);
 
         for (int i = 0; i < count; i++)
         {
@@ -135,6 +156,7 @@ public class DiceObject : MonoBehaviour
 
     private void Start()
     {
+        //Shake();
         //image.sprite = sprites[0];
     }
 
@@ -143,9 +165,55 @@ public class DiceObject : MonoBehaviour
         //sprites= Resources.LoadAll<Sprite>("Dice");
     }
 
+    private void Update()
+    {
+
+    }
+
+    public void Shake()
+    {
+        shaking = true;
+        StartCoroutine(ShakeAnimation());
+
+    }
+
+    public void StopShake()
+    {
+        shaking = false;
+    }
 
 
+    private IEnumerator ShakeAnimation()
+    {
+        float deltaAngle = 2;
+        float max = 20;
+        float count = 0;
+        float deltaTime = 0.1f;
 
+        while (shaking)
+        {
+            DOTweenUtils.RotateAngle(gameObject, deltaAngle, deltaTime);
+            count += deltaAngle;
 
+            if (Mathf.Abs(count) > max)
+            {
+                deltaAngle *= -1;
+                count = 0;
+                yield return new WaitForSeconds(deltaTime);
+            }
+        }
 
+        yield return null;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if(showFullInfo)
+            ShowDiceView();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HideDiceView();
+    }
 }

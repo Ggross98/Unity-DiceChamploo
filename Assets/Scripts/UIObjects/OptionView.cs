@@ -37,4 +37,11 @@ public class OptionView : MonoBehaviour
         button.interactable = a;
     }
 
+    public void SetWidth(float width)
+    {
+        Vector2 _size = GetComponent<RectTransform>().sizeDelta;
+        float _width = _size.x;
+        transform.localScale = new Vector2(width / _width, width / _width);
+    }
+
 }
